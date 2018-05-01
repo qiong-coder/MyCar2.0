@@ -1,0 +1,175 @@
+package org.buaa.ly.MyCar.logic.impl;
+
+import com.google.common.collect.Lists;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import lombok.extern.slf4j.Slf4j;
+import org.buaa.ly.MyCar.entity.Order;
+import org.buaa.ly.MyCar.entity.QOrder;
+import org.buaa.ly.MyCar.entity.Vehicle;
+import org.buaa.ly.MyCar.entity.VehicleInfo;
+import org.buaa.ly.MyCar.http.dto.OrderDTO;
+import org.buaa.ly.MyCar.http.dto.VehicleDTO;
+import org.buaa.ly.MyCar.http.dto.VehicleInfoDTO;
+import org.buaa.ly.MyCar.logic.OrderLogic;
+import org.buaa.ly.MyCar.repository.OrderRepository;
+import org.buaa.ly.MyCar.utils.BeanCopyUtils;
+import org.buaa.ly.MyCar.utils.StatusEnum;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
+
+@Component("orderLogic")
+@Slf4j
+@Transactional
+public class OrderLogicImpl implements OrderLogic {
+
+
+    private OrderRepository orderRepository;
+    
+    @Autowired
+    public void setOrderRepository(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
+    @Override
+    public Order find(int id) {
+        return orderRepository.findById(id);
+    }
+
+    @Override
+    public List<Order> findByViidAndStatus(Integer viid, Integer status) {
+        QOrder order = QOrder.order;
+        BooleanExpression expression = null;
+        if ( viid != null ) expression = order.vehicleInfo.id.eq(viid);
+        if ( status != null ) {
+            if (expression != null) expression.and(order.status.eq(status));
+            else expression = order.status.eq(status);
+        }
+        if ( expression != null ) return Lists.newArrayList(orderRepository.findAll(expression));
+        else return Lists.newArrayList(orderRepository.findAll());
+    }
+
+    @Override
+    public void findByViidAndStatus(Integer viid, Integer status, List<OrderDTO> orderDTOS,
+                                    Map<Integer, VehicleDTO> vehicleDTOMap,
+                                    Map<Integer, VehicleInfoDTO> vehicleInfoDTOMap) {
+        List<Order> orders = findByViidAndStatus(viid, status);
+
+        for ( Order order : orders ) {
+            orderDTOS.add(OrderDTO.build(order));
+
+            Vehicle vehicle = order.getVehicle();
+            if ( vehicle != null ) vehicleDTOMap.put(vehicle.getId(), VehicleDTO.build(vehicle));
+
+            VehicleInfo vehicleInfo = order.getVehicleInfo();
+            if ( vehicleInfo != null ) vehicleInfoDTOMap.put(vehicleInfo.getId(), VehicleInfoDTO.build(vehicleInfo));
+        }
+
+
+    }
+
+    @Override
+    public List<Order> findHistoryOrders(Integer viid, Integer vid, Timestamp begin, Timestamp end, List<Integer> status) {
+
+        QOrder order = QOrder.order;
+
+        BooleanExpression booleanExpression  = null;
+
+        if ( viid != null ) booleanExpression = order.vehicleInfo.id.eq(viid);
+        else if ( vid != null ) booleanExpression = order.vehicle.id.eq(vid);
+
+        if ( begin != null && end != null ) {
+            BooleanExpression expression = order.realBeginTime.lt(end).and(order.realEndTime.gt(begin));
+            if ( booleanExpression != null ) booleanExpression.and(expression);
+            else booleanExpression = expression;
+        }
+        if ( status != null ) {
+            BooleanExpression expression = order.status.in(status);
+            if ( booleanExpression != null ) booleanExpression.and(expression);
+            else booleanExpression = expression;
+        }
+        if ( booleanExpression != null )
+            return Lists.newArrayList(orderRepository.findAll(booleanExpression));
+        else return Lists.newArrayList(orderRepository.findAll());
+
+    }
+
+    @Override
+    public List<Order> findScheduleOrders(Integer viid, Integer sid, Timestamp begin, Timestamp end) {
+
+        QOrder order = QOrder.order;
+
+        BooleanExpression booleanExpression = null;
+
+        if ( viid != null ) booleanExpression = order.vehicleInfo.id.eq(viid);
+
+        if ( sid != null ) {
+            if ( booleanExpression != null ) booleanExpression.and(order.rentStore.id.eq(sid));
+            booleanExpression = order.rentStore.id.eq(sid);
+        }
+
+        BooleanExpression pendingStatus = order.beginTime.lt(end).and(order.endTime.gt(begin)).and(order.status.eq(StatusEnum.PENDING.getStatus()));
+        BooleanExpression rentingStatus = order.realBeginTime.lt(end).and(order.realEndTime.gt(begin)).and(order.status.eq(StatusEnum.RENTING.getStatus()));
+
+        if ( booleanExpression != null )
+            booleanExpression.and(pendingStatus.or(rentingStatus));
+        else booleanExpression = pendingStatus.or(rentingStatus);
+
+        return Lists.newArrayList(orderRepository.findAll(booleanExpression));
+
+    }
+
+    @Override
+    public void countByStatus(Integer status, Map<Integer, Integer> statusCount) {
+        List<Order> orders = findByViidAndStatus(null, status);
+        for ( Order order : orders ) {
+            Integer count = statusCount.get(order.getStatus());
+            if ( count == null ) count = 1;
+            else count += 1;
+            statusCount.put(order.getStatus(), count);
+        }
+    }
+
+    @Override
+    public Order insert(Order order) {
+        return orderRepository.save(order);
+    }
+
+    @Modifying
+    @Override
+    public Order update(Order order) {
+        Order o = orderRepository.findById(order.getId().intValue());
+        if ( o == null ) return null;
+        else {
+            BeanCopyUtils.copyPropertiesIgnoreNull(order, o);
+            return o;
+        }
+    }
+
+    @Modifying
+    @Override
+    public Order update(int id, int status) {
+        Order o = orderRepository.findById(id);
+        if ( o == null ) return o;
+        else {
+            o.setStatus(status);
+            return o;
+        }
+    }
+
+    @Modifying
+    @Override
+    public Order delete(int id) {
+        Order order = orderRepository.findById(id);
+
+        if (order != null) orderRepository.delete(order);
+
+        return order;
+    }
+}
