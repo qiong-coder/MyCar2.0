@@ -20,18 +20,18 @@ public class UploadAction {
 
 
     @RequestMapping(value = "/{type}/{id}/", method = RequestMethod.GET)
-    public HttpResponse find(HttpServletRequest request,
+    public HttpResponse find(@RequestHeader String token,
                              @PathVariable String type,
                              @PathVariable String id) {
-        accountService.check(request, RoleEnum.USER);
+        accountService.check(token, RoleEnum.USER);
 
         return new HttpResponse(uploadService.find(type, id));
     }
 
     @RequestMapping(value = "/{type}/{id}/", method = RequestMethod.POST)
     public HttpResponse save(@RequestPart Part attachment,
-                               @PathVariable String id,
-                               @PathVariable String type) {
+                             @PathVariable String id,
+                             @PathVariable String type) {
         String dir = uploadService.save(type, id, attachment);
         return new HttpResponse(dir);
     }

@@ -1,6 +1,7 @@
 package org.buaa.ly.MyCar.http.dto;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -37,5 +38,10 @@ public class AccountDTO extends DTOBase {
 
     static public AccountDTO build(Account account) {
         return build(account, AccountDTO.class);
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
     }
 }

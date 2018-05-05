@@ -44,30 +44,29 @@ public class VehicleAction {
                                                @PathVariable int sid,
                                                @PathVariable Timestamp begin,
                                                @PathVariable Timestamp end) {
-        //TODO: 按时间和车型进行排查
         return new HttpResponse(vehicleService.findByViidAndSidAndTimestamp(viid, sid, begin, end));
     }
 
 
     @RequestMapping(value = "/vehicle/", method = RequestMethod.POST)
-    public HttpResponse insert(HttpServletRequest request,
+    public HttpResponse insert(@RequestHeader String token,
                                @RequestBody VehicleDTO vehicleDTO) {
-        accountService.check(request, RoleEnum.OPERATOR);
+        accountService.check(token, RoleEnum.OPERATOR);
         return new HttpResponse(vehicleService.insert(vehicleDTO));
     }
 
     @RequestMapping(value = "/vehicle/", method = RequestMethod.PUT)
-    public HttpResponse update(HttpServletRequest request,
+    public HttpResponse update(@RequestHeader String token,
                                @RequestBody VehicleDTO vehicleDTO) {
-        accountService.check(request, RoleEnum.OPERATOR);
+        accountService.check(token, RoleEnum.OPERATOR);
         vehicleService.update(vehicleDTO);
         return new HttpResponse();
     }
 
     @RequestMapping(value = "/vehicle/{id}/", method = RequestMethod.DELETE)
-    public HttpResponse delete(HttpServletRequest request,
+    public HttpResponse delete(@RequestHeader String token,
                                @PathVariable int id) {
-        accountService.check(request, RoleEnum.OPERATOR);
+        accountService.check(token, RoleEnum.OPERATOR);
         if ( true ) {
             vehicleService.update(id, StatusEnum.DELETE.getStatus());
         } else {

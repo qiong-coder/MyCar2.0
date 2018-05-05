@@ -7,14 +7,18 @@ import org.buaa.ly.MyCar.exception.*;
 import org.buaa.ly.MyCar.http.dto.AccountDTO;
 import org.buaa.ly.MyCar.logic.AccountLogic;
 import org.buaa.ly.MyCar.service.AccountService;
+import org.buaa.ly.MyCar.service.RedisService;
 import org.buaa.ly.MyCar.utils.BasicAuthUtils;
 import org.buaa.ly.MyCar.utils.Md5;
 import org.buaa.ly.MyCar.utils.RoleEnum;
 import org.buaa.ly.MyCar.utils.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.servlet.http.HttpServletRequest;
@@ -25,14 +29,25 @@ import java.security.NoSuchAlgorithmException;
 
 @Component("accountServiceImpl")
 @Slf4j
-//@Transactional
 @PersistenceContext(type = PersistenceContextType.EXTENDED)
 public class AccountServiceImpl implements AccountService {
 
-    @Autowired private AccountLogic accountLogic;
+    private AccountLogic accountLogic;
+
+    private RedisService redisService;
+
+    @Autowired
+    public void setAccountLogic(AccountLogic accountLogic) {
+        this.accountLogic = accountLogic;
+    }
+
+    @Autowired
+    public void setRedisService(RedisService redisService) {
+        this.redisService = redisService;
+    }
 
     @Override
-    public AccountDTO login(HttpServletRequest request, String username, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public AccountDTO login(String username, String password) {
 
         Account account = accountLogic.find(username);
 
@@ -47,39 +62,38 @@ public class AccountServiceImpl implements AccountService {
         AccountDTO accountDTO = AccountDTO.build(account);
         accountDTO.setToken(credential);
 
+        redisService.putAccountDTO(accountDTO);
+
         return accountDTO;
+
     }
 
 
     @Override
-    public void check(HttpServletRequest request, RoleEnum role) {
-
-        String token = request.getHeader("token");
+    public void check(String token, RoleEnum role) {
 
         if ( token == null ) throw new NonLoginError();
 
         if ( token.compareTo("test") == 0 ) return;
 
-        HttpSession session = request.getSession(false);
-        if ( session == null ) throw new NotFoundError("failure to find session");
+        AccountDTO accountDTO = redisService.findAccountDTO(token);
 
-        if ( session.getAttribute("token") == null ) throw new  NonLoginError();
+        if ( accountDTO == null ) throw new  NonLoginError();
 
-        String sToken = (String)session.getAttribute("token");
+        String sToken = accountDTO.getToken();
 
         if ( sToken.compareTo(token) != 0 ) throw new PermissionDenyError();
 
         if ( role == null ) return;
 
-        Integer sRole = (Integer)session.getAttribute("role");
-        if ( sRole == null || sRole > role.getRole()) throw new PermissionDenyError();
+        Integer sRole = accountDTO.getRole();
 
+        if ( sRole == null || sRole > role.getRole()) throw new PermissionDenyError();
     }
 
     @Override
-    public void logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if ( session != null ) session.invalidate();
+    public void logout(String token) {
+        redisService.deleteAccountDTO(token);
     }
 
     @Override
@@ -107,11 +121,22 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountDTO update(AccountDTO accountDTO) {
 
-        Account account = accountLogic.update(accountDTO.build());
+        Account account = accountLogic.find(accountDTO.getUsername());
 
         if ( account == null ) throw new NotFoundError("failure to find the account");
 
-        return AccountDTO.build(account);
+        accountDTO = AccountDTO.build(accountLogic.update(accountDTO.build()));
+
+        String token = BasicAuthUtils.basicAuth(account.getUsername(), account.getPassword());
+
+        redisService.deleteAccountDTO(token);
+
+        token = BasicAuthUtils.basicAuth(accountDTO.getUsername(), accountDTO.getPassword());
+
+        redisService.deleteAccountDTO(token);
+
+        return accountDTO;
+
     }
 
     @Override
@@ -119,6 +144,10 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountLogic.setStatus(username, StatusEnum.DELETE.getStatus());
 
         if (account == null ) throw new NotFoundError("failure to find the account");
+
+        String token = BasicAuthUtils.basicAuth(account.getUsername(), account.getPassword());
+
+        redisService.deleteAccountDTO(token);
     }
 
 

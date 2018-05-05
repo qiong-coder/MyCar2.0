@@ -16,7 +16,8 @@ public enum ResponseStatusMsg {
     NOT_FOUND(-23, "not found"),
     DUPLICATE_ERROR(-24, "duplicate error"),
     STATUS_ERROR(-25, "status error"),
-    CHECK_ERROR(-26, "check error");
+    CHECK_ERROR(-26, "check error"),
+    CODE_REQUEST_TIMEOUT(-27, "code request not timeout");
 
 
     private int status;

@@ -1,6 +1,7 @@
 package org.buaa.ly.MyCar.action;
 
 
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.entity.VehicleInfo;
 import org.buaa.ly.MyCar.exception.BaseError;
@@ -32,44 +33,45 @@ public class VehicleInfoAction {
 
 
     @RequestMapping(value = "/{id}/", method = RequestMethod.GET)
-    public HttpResponse find(HttpServletRequest request,
+    public HttpResponse find(@RequestHeader String token,
                              @PathVariable int id) {
-        accountService.check(request, RoleEnum.OPERATOR);
+        accountService.check(token, RoleEnum.OPERATOR);
 
         return new HttpResponse(vehicleInfoService.find(id));
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public HttpResponse find(HttpServletRequest request,
+    public HttpResponse find(@RequestHeader String token,
                              @RequestParam(required = false) List<Integer> status,
                              @RequestParam(required = false, defaultValue = "false") boolean exclude) {
         return new HttpResponse(vehicleInfoService.find(status, exclude));
     }
 
+    // Timestamp参数格式为 yyyy-mm-dd HH:MM:SS 即可
     @RequestMapping(value = "/{sid}/{begin}/{end}/", method = RequestMethod.GET)
-    public HttpResponse find(HttpServletRequest request,
+    public HttpResponse find(@RequestHeader String token,
                              @PathVariable int sid,
                              @PathVariable Timestamp begin,
                              @PathVariable Timestamp end) {
         //TODO: 完成时间排查车型返回
-        return null;
+        return new HttpResponse(vehicleInfoService.find(Lists.newArrayList(0),false));
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public HttpResponse insert(HttpServletRequest request,
+    public HttpResponse insert(@RequestHeader String token,
                                @RequestPart(value = "vehicleInfoDTO") VehicleInfoDTO vehicleInfoDTO,
                                @RequestPart(value = "attachment", required = false) Part attachment) {
-        accountService.check(request, RoleEnum.OPERATOR);
+        accountService.check(token, RoleEnum.OPERATOR);
 
         return new HttpResponse(vehicleInfoService.insert(vehicleInfoDTO, attachment));
     }
 
 
     @RequestMapping(value = "/", method = RequestMethod.PUT)
-    public HttpResponse update(HttpServletRequest request,
+    public HttpResponse update(@RequestHeader String token,
                                VehicleInfoDTO vehicleInfoDTO,
                                @RequestPart(required = false) Part attachment) {
-        accountService.check(request, RoleEnum.OPERATOR);
+        accountService.check(token, RoleEnum.OPERATOR);
 
         vehicleInfoService.update(vehicleInfoDTO, attachment);
 
@@ -77,9 +79,9 @@ public class VehicleInfoAction {
     }
 
     @RequestMapping(value = "/{id}/", method = RequestMethod.DELETE)
-    public HttpResponse delete(HttpServletRequest request,
+    public HttpResponse delete(@RequestHeader String token,
                                @PathVariable int id) {
-        accountService.check(request, RoleEnum.OPERATOR);
+        accountService.check(token, RoleEnum.OPERATOR);
 
         vehicleInfoService.delete(id, false);
 

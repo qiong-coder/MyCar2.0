@@ -12,5 +12,5 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
         "org.buaa.ly.MyCar.repository",
         "org.buaa.ly.MyCar.logic"},
         excludeFilters = {@ComponentScan.Filter(type = FilterType.ANNOTATION, value = EnableWebMvc.class)})
-@Import({JpaConfig.class})
+@Import({JpaConfig.class, RedisConfig.class})
 public class RootConfig {}

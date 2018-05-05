@@ -40,10 +40,10 @@ public class VehicleInfoCostAction {
     }
 
     @RequestMapping(value = "/{id}/", method = RequestMethod.PUT)
-    public HttpResponse update(HttpServletRequest request,
+    public HttpResponse update(@RequestHeader String token,
                                @PathVariable int id,
                                @RequestBody CostInfoRequest costInfoRequest){
-        accountService.check(request, RoleEnum.OPERATOR);
+        accountService.check(token, RoleEnum.OPERATOR);
         vehicleInfoCostService.update(id, costInfoRequest);
         return new HttpResponse();
     }

@@ -37,7 +37,7 @@ public class Account implements Serializable {
     @Column(name = "phone")
     private String phone;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sid", insertable = false, updatable = false)
     //@JSONField(name = "sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
     @JSONField(serialize = false, deserialize = false)

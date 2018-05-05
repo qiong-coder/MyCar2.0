@@ -61,7 +61,8 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public List<VehicleDTO> findByViidAndSidAndTimestamp(int viid, int sid, Timestamp begin, Timestamp end) {
-        return null;
+        // TODO: 实际的检测逻辑
+        return VehicleDTO.build(vehicleLogic.find(sid, viid, null, false));
     }
 
     @Override

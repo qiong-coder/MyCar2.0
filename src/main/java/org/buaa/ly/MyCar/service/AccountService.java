@@ -10,11 +10,11 @@ import java.security.NoSuchAlgorithmException;
 
 public interface AccountService {
 
-    void check(HttpServletRequest request, RoleEnum role);
+    void check(String token, RoleEnum role);
 
-    AccountDTO login(HttpServletRequest request, String username, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException;
+    AccountDTO login(String username, String password);
 
-    void logout(HttpServletRequest request);
+    void logout(String token);
 
     AccountDTO insert(AccountDTO accountDTO);
 
