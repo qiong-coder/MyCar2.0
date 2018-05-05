@@ -2,6 +2,8 @@ package org.buaa.ly.MyCar.logic;
 
 import org.buaa.ly.MyCar.entity.Vehicle;
 
+import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -11,13 +13,9 @@ public interface VehicleLogic {
 
     Vehicle find(String number);
 
-    List<Vehicle> find(Integer viid, Integer sid, Integer status);
+    List<Vehicle> find(Integer sid, Integer viid, Collection<Integer> status, boolean exclude);
 
-    List<Vehicle> findStatusNot(Integer viid, Integer sid, Integer status);
-
-    Map<Integer, Map<Integer, Integer>> countByStoreAndVehicleInfoAndStatusNot(Integer viid, Integer sid, Integer status);
-
-    Vehicle insert(int viid, Vehicle vehicle);
+    Vehicle insert(Vehicle vehicle);
 
     Vehicle update(Vehicle vehicle);
 

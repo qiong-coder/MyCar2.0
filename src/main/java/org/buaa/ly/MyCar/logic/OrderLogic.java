@@ -1,6 +1,8 @@
 package org.buaa.ly.MyCar.logic;
 
 import org.buaa.ly.MyCar.entity.Order;
+import org.buaa.ly.MyCar.entity.Vehicle;
+import org.buaa.ly.MyCar.entity.VehicleInfo;
 import org.buaa.ly.MyCar.http.dto.OrderDTO;
 import org.buaa.ly.MyCar.http.dto.VehicleDTO;
 import org.buaa.ly.MyCar.http.dto.VehicleInfoDTO;
@@ -16,9 +18,9 @@ public interface OrderLogic {
     List<Order> findByViidAndStatus(Integer viid, Integer status);
 
     void findByViidAndStatus(Integer viid, Integer status,
-                             List<OrderDTO> orderDTOS,
-                             Map<Integer, VehicleDTO> vehicleDTOMap,
-                             Map<Integer, VehicleInfoDTO> vehicleInfoDTOMap);
+                             List<Order> orderDTOS,
+                             Map<Integer, Vehicle> vehicleDTOMap,
+                             Map<Integer, VehicleInfo> vehicleInfoDTOMap);
 
     List<Order> findHistoryOrders(Integer viid, Integer vid, Timestamp begin, Timestamp end, List<Integer> status);
 

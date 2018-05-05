@@ -18,15 +18,22 @@ public class AccountRepositoryTest extends TestLoader {
     @Test
     public void testQueryDsl() {
 
-
         QAccount account = QAccount.account;
 
         List<Account> accountList = Lists.newArrayList(accountRepository.findAll(account.username.eq("admin")));
-
         assert(accountList.size() == 1);
+
+        accountList = Lists.newArrayList(accountRepository.findAll(account.store.id.eq(1)));
+        assert(accountList.size() == 1);
+
     }
 
     @Test
-    public void testUpdate() { }
+    public void testUpdate() {
+        Account account = accountRepository.findByUsername("admin");
+
+        assert(account.getSid() == 2);
+
+    }
 
 }

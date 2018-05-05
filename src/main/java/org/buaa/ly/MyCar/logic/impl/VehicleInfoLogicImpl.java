@@ -2,7 +2,9 @@ package org.buaa.ly.MyCar.logic.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.slf4j.Slf4j;
+import org.buaa.ly.MyCar.entity.QVehicleInfo;
 import org.buaa.ly.MyCar.entity.VehicleInfo;
 import org.buaa.ly.MyCar.logic.VehicleInfoLogic;
 import org.buaa.ly.MyCar.repository.VehicleInfoRepository;
@@ -32,29 +34,38 @@ public class VehicleInfoLogicImpl implements VehicleInfoLogic {
     }
 
     @Override
-    public List<VehicleInfo> findByStatusNot(Integer status) {
-        if ( status != null ) return vehicleInfoRepository.findByStatusNot(status);
+    public List<VehicleInfo> find(List<Integer> status, boolean exclude) {
+
+        QVehicleInfo qVehicleInfo = QVehicleInfo.vehicleInfo;
+
+        BooleanExpression expression = null;
+
+        if ( status != null ) {
+            expression = exclude ? qVehicleInfo.status.in(status).not() : qVehicleInfo.status.in(status);
+        }
+
+        if ( expression != null ) return Lists.newArrayList(vehicleInfoRepository.findAll(expression));
         else return Lists.newArrayList(vehicleInfoRepository.findAll());
     }
 
-    @Override
-    public Map<Integer, VehicleInfo> findVehicleInfoMap(Integer viid) {
-        List<VehicleInfo> vehicleInfos;
-        Map<Integer, VehicleInfo> vehicleInfoMap = Maps.newHashMap();
-        if ( viid != null ) {
-            VehicleInfo vehicleInfo = vehicleInfoRepository.findById(viid.intValue());
-            if ( vehicleInfo != null ) vehicleInfos = Lists.newArrayList(vehicleInfo);
-            else return vehicleInfoMap;
-        }
-        else vehicleInfos = Lists.newArrayList(vehicleInfoRepository.findAll());
-
-        for ( VehicleInfo vehicleInfo : vehicleInfos ) {
-            if ( !vehicleInfoMap.containsKey(vehicleInfo.getId()) )
-                vehicleInfoMap.put(vehicleInfo.getId(), vehicleInfo);
-        }
-
-        return vehicleInfoMap;
-    }
+//    @Override
+//    public Map<Integer, VehicleInfo> findVehicleInfoMap(Integer viid) {
+//        List<VehicleInfo> vehicleInfos;
+//        Map<Integer, VehicleInfo> vehicleInfoMap = Maps.newHashMap();
+//        if ( viid != null ) {
+//            VehicleInfo vehicleInfo = vehicleInfoRepository.findById(viid.intValue());
+//            if ( vehicleInfo != null ) vehicleInfos = Lists.newArrayList(vehicleInfo);
+//            else return vehicleInfoMap;
+//        }
+//        else vehicleInfos = Lists.newArrayList(vehicleInfoRepository.findAll());
+//
+//        for ( VehicleInfo vehicleInfo : vehicleInfos ) {
+//            if ( !vehicleInfoMap.containsKey(vehicleInfo.getId()) )
+//                vehicleInfoMap.put(vehicleInfo.getId(), vehicleInfo);
+//        }
+//
+//        return vehicleInfoMap;
+//    }
 
     @Override
     public VehicleInfo insert(VehicleInfo vehicleInfo) {

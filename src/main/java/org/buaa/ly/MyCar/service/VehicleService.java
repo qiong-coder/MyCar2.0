@@ -1,22 +1,23 @@
 package org.buaa.ly.MyCar.service;
 
 import org.buaa.ly.MyCar.http.dto.VehicleDTO;
+import org.buaa.ly.MyCar.utils.StatusEnum;
 
+import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 
 public interface VehicleService {
 
     VehicleDTO find(int id);
 
-    List<VehicleDTO> findByStatusNot(int status);
+    List<VehicleDTO> findBySidAndViidAndStatus(Integer sid, Integer viid, Collection<Integer> status, boolean exclude);
 
-    List<VehicleDTO> findByViidAndStatusNot(int viid, int status);
+    List<VehicleDTO> findByViidAndSidAndTimestamp(int viid, int sid, Timestamp begin, Timestamp end);
 
-    List<VehicleDTO> findByViidAndSidAndStatus(int viid, int sid, int status);
+    VehicleDTO insert(VehicleDTO vehicleDTO);
 
-    VehicleDTO insert(int viid, VehicleDTO vehicleDTO);
-
-    VehicleDTO update(int id, VehicleDTO vehicleDTO);
+    VehicleDTO update(VehicleDTO vehicleDTO);
 
     VehicleDTO delete(int id);
 

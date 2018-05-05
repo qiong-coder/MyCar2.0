@@ -14,7 +14,7 @@ public class TimeUtils {
 
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    public static String getDateFormat(Calendar calendar) {
+    public static String getDateFormat(Date calendar) {
         return dateFormat.format(calendar);
     }
 
@@ -26,4 +26,10 @@ public class TimeUtils {
     public static int days(Timestamp begin , Timestamp end) {
         return Long.valueOf((end.getTime() - begin.getTime()) / (24 * 60 * 3600 * MILLIS_PER_SECOND)).intValue();
     }
+
+    public static int hour(Timestamp timestamp) {
+        return Long.valueOf(timestamp.getTime()/(3600 * MILLIS_PER_SECOND)).intValue();
+    }
+
+
 }

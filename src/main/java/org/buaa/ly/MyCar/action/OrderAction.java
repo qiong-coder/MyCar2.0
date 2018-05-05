@@ -114,6 +114,26 @@ public class OrderAction {
                 begin, end));
     }
 
+    @RequestMapping(value = "/order/history/viid/{number}/{begin}/{end}/", method = RequestMethod.GET)
+    public HttpResponse history(HttpServletRequest request,
+                                @PathVariable String number,
+                                @PathVariable Timestamp begin,
+                                @PathVariable Timestamp end)
+    {
+        return new HttpResponse(orderService.history(null,
+                number.compareTo("null")==0?null:number,
+                begin, end));
+    }
+
+    @RequestMapping(value = "/order/history/viid/number/{begin}/{end}/", method = RequestMethod.GET)
+    public HttpResponse history(HttpServletRequest request,
+                                @PathVariable Timestamp begin,
+                                @PathVariable Timestamp end)
+    {
+        return new HttpResponse(orderService.history(null, null,
+                begin, end));
+    }
+
     @RequestMapping(value = "/order/schedule/{sid}/{viid}/{begin}/{end}/", method = RequestMethod.GET)
     public HttpResponse schedule(HttpServletRequest request,
                                  @PathVariable Integer sid,

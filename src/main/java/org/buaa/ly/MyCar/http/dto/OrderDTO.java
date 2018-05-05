@@ -84,4 +84,5 @@ public class OrderDTO extends DTOBase {
         return build(order, OrderDTO.class);
     }
 
+    public static List<OrderDTO> build(List<Order> orders) { return build(orders, OrderDTO.class); }
 }

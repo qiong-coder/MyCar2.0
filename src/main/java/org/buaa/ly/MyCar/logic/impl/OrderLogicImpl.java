@@ -56,21 +56,20 @@ public class OrderLogicImpl implements OrderLogic {
     }
 
     @Override
-    public void findByViidAndStatus(Integer viid, Integer status, List<OrderDTO> orderDTOS,
-                                    Map<Integer, VehicleDTO> vehicleDTOMap,
-                                    Map<Integer, VehicleInfoDTO> vehicleInfoDTOMap) {
+    public void findByViidAndStatus(Integer viid, Integer status, List<Order> orderDTOS,
+                                    Map<Integer, Vehicle> vehicleMap,
+                                    Map<Integer, VehicleInfo> vehicleInfoMap) {
         List<Order> orders = findByViidAndStatus(viid, status);
 
         for ( Order order : orders ) {
-            orderDTOS.add(OrderDTO.build(order));
+            orders.add(order);
 
             Vehicle vehicle = order.getVehicle();
-            if ( vehicle != null ) vehicleDTOMap.put(vehicle.getId(), VehicleDTO.build(vehicle));
+            if ( vehicle != null ) vehicleMap.put(vehicle.getId(), vehicle);
 
             VehicleInfo vehicleInfo = order.getVehicleInfo();
-            if ( vehicleInfo != null ) vehicleInfoDTOMap.put(vehicleInfo.getId(), VehicleInfoDTO.build(vehicleInfo));
+            if ( vehicleInfo != null ) vehicleInfoMap.put(vehicleInfo.getId(), vehicleInfo);
         }
-
 
     }
 

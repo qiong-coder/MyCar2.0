@@ -12,7 +12,7 @@ public class CostItemDeserializer implements ObjectDeserializer {
 
     @Override
     public <T> T deserialze(DefaultJSONParser defaultJSONParser, Type type, Object o) {
-        return (T)JSON.parseArray((String)o, CostItem.class);
+        return (T)defaultJSONParser.parseArray(CostItem.class);
     }
 
     @Override

@@ -12,7 +12,7 @@ public class ListInteger2StringDeserializer implements ObjectDeserializer {
 
     @Override
     public <T> T deserialze(DefaultJSONParser defaultJSONParser, Type type, Object o) {
-        return (T)JSON.parseArray((String)o,Integer.class);
+        return (T)defaultJSONParser.parseArray(Integer.class);
     }
 
     @Override

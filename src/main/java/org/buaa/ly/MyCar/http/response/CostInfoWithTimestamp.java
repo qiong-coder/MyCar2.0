@@ -29,13 +29,11 @@ public class CostInfoWithTimestamp {
                                               Timestamp begin,
                                               Timestamp end) {
 
-        Calendar bcalendar = Calendar.getInstance();
-        Calendar ecalendar = Calendar.getInstance();
-        bcalendar.setTime(begin);
-        ecalendar.setTime(end);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(begin);
 
-        int bhour = bcalendar.get(Calendar.HOUR);
-        int ehour = bcalendar.get(Calendar.HOUR);
+        int bhour = TimeUtils.hour(begin);
+        int ehour = TimeUtils.hour(end);
 
         int total_cost = 0;
         Map<String, Integer> day_costs = Maps.newHashMap();
@@ -43,12 +41,13 @@ public class CostInfoWithTimestamp {
         Map<String, Integer> overtime = Maps.newHashMap();
 
         while ( ehour - bhour >= 6 ) {
-            int day_cost = vehicleInfoCost.day_cost(bcalendar);
-            int discount = vehicleInfoCost.discount(bcalendar);
-            day_costs.put(TimeUtils.getDateFormat(bcalendar), day_cost);
-            discounts.put(TimeUtils.getDateFormat(bcalendar), discount);
+            int day_cost = vehicleInfoCost.day_cost(calendar);
+            int discount = vehicleInfoCost.discount(calendar);
+            day_costs.put(TimeUtils.getDateFormat(calendar.getTime()), day_cost);
+            discounts.put(TimeUtils.getDateFormat(calendar.getTime()), discount);
             total_cost += day_cost * discount / 100;
-            bcalendar.add(Calendar.DATE, 1);
+            calendar.add(Calendar.DATE, 1);
+            bhour += 24;
         }
 
         if ( ehour - bhour >= 5 ) {

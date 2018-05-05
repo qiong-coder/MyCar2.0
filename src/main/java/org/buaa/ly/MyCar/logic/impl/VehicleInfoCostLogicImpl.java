@@ -1,6 +1,7 @@
 package org.buaa.ly.MyCar.logic.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.entity.VehicleInfo;
 import org.buaa.ly.MyCar.http.request.CostInfoRequest;
@@ -9,20 +10,40 @@ import org.buaa.ly.MyCar.logic.VehicleInfoCostLogic;
 import org.buaa.ly.MyCar.repository.VehicleInfoRepository;
 import org.buaa.ly.MyCar.utils.BeanCopyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component("vehicleInfoCostLogic")
 @Slf4j
+@PropertySource("classpath:default-value.properties")
 public class VehicleInfoCostLogicImpl implements VehicleInfoCostLogic {
+
+    @Value("${vehicle.info.cost.insurance}") private String insurance;
+    @Value("${vehicle.info.cost.day_cost}") private int cost;
+    @Value("${vehicle.info.cost.discount}") private int discount;
+
 
     private VehicleInfoRepository vehicleInfoRepository;
 
     @Autowired
-
     void setVehicleInfoRepository(VehicleInfoRepository vehicleInfoRepository) {
         this.vehicleInfoRepository = vehicleInfoRepository;
     }
+
+    private List<Integer> parseInsurance() {
+        String[] list = insurance.split(",");
+        List<Integer> ins = Lists.newArrayList(list.length);
+        for ( String s : list ) {
+            ins.add(Integer.parseInt(s));
+        }
+        return ins;
+    }
+
+
 
     @Override
     public VehicleInfoCost find(int id) {
@@ -30,7 +51,7 @@ public class VehicleInfoCostLogicImpl implements VehicleInfoCostLogic {
         if ( vehicleInfo == null ) return null;
 
         if ( vehicleInfo.getCost() == null ) {
-            return update(id, CostInfoRequest.build(10000, 100));
+            return update(id, CostInfoRequest.build(10000, 100, null));
         } else {
             return JSONObject.parseObject(vehicleInfo.getCost(), VehicleInfoCost.class);
         }
@@ -47,11 +68,19 @@ public class VehicleInfoCostLogicImpl implements VehicleInfoCostLogic {
         VehicleInfo vehicleInfo = vehicleInfoRepository.findById(id);
         if ( vehicleInfo == null ) return null;
 
-        VehicleInfoCost vehicleInfoCost1 = vehicleInfo.getCost() == null? CostInfoRequest.build(10000, 100):
-                JSONObject.parseObject(vehicleInfo.getCost(), VehicleInfoCost.class);
+        if ( vehicleInfo.getCost() == null ) {
+            vehicleInfo.setCost(JSONObject.toJSONString(vehicleInfoCost));
+            return vehicleInfoCost;
+        } else {
+            VehicleInfoCost v = JSONObject.parseObject(vehicleInfo.getCost(), VehicleInfoCost.class);
+            BeanCopyUtils.copyPropertiesIgnoreNull(vehicleInfoCost, v);
+            vehicleInfo.setCost(JSONObject.toJSONString(v));
+            return v;
+        }
+    }
 
-        BeanCopyUtils.copyPropertiesIgnoreNull(vehicleInfoCost, vehicleInfoCost1);
-        vehicleInfo.setCost(JSONObject.toJSONString(vehicleInfoCost1));
-        return vehicleInfoCost1;
+    @Override
+    public VehicleInfoCost defaultCost() {
+        return CostInfoRequest.build(cost, discount, parseInsurance());
     }
 }

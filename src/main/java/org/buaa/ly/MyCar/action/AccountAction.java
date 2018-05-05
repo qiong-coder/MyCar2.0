@@ -23,7 +23,7 @@ public class AccountAction {
     @RequestMapping(value = "/login/", method = RequestMethod.POST)
     public HttpResponse login(HttpServletRequest request,
                               @RequestBody AccountDTO accountDTO) throws Exception {
-        return new HttpResponse(accountService.login(request, accountDTO.getName(), accountDTO.getPassword()));
+        return new HttpResponse(accountService.login(request, accountDTO.getUsername(), accountDTO.getPassword()));
     }
 
 
@@ -47,7 +47,6 @@ public class AccountAction {
         return new HttpResponse();
     }
 
-
     @RequestMapping(value = "/{username}/", method = RequestMethod.GET)
     public HttpResponse find(HttpServletRequest request,
                              @PathVariable String username) {
@@ -56,16 +55,13 @@ public class AccountAction {
         return new HttpResponse(accountService.find(username));
     }
 
-    @RequestMapping(value = "/{username}/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/", method = RequestMethod.PUT)
     public HttpResponse update(HttpServletRequest request,
-                               @PathVariable String username,
                                @RequestBody AccountDTO accountDTO)
     {
         accountService.check(request, RoleEnum.ADMINISTRATOR);
 
-        accountService.update(username, accountDTO);
-
-        return new HttpResponse();
+        return new HttpResponse(accountService.update(accountDTO));
     }
 
     @RequestMapping(value = "/{username}/", method = RequestMethod.DELETE)

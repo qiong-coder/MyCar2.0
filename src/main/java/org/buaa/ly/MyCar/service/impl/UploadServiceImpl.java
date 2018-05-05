@@ -22,7 +22,7 @@ public class UploadServiceImpl implements UploadService {
 
     @Override
     public void setServletContext(@Nonnull  ServletContext servletContext) {
-        media_path = servletContext.getRealPath("/")+"../images";
+        media_path = servletContext.getRealPath("/")+"/../images";
         File file = new File(media_path);
         if ( !file.exists() ) file.mkdirs();
 

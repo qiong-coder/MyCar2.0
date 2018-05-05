@@ -26,11 +26,11 @@ public class VehicleInfoCost {
     }
 
     public int discount(Calendar calendar) {
-        return discounts.get(calendar.get(Calendar.MONTH)).get(calendar.get(Calendar.DAY_OF_MONTH)-1);
+        return discounts.get(calendar.get(Calendar.MONTH)).get(calendar.get(Calendar.DATE)-1);
     }
 
     public int day_cost(Calendar calendar) {
-        return day_costs.get(calendar.get(Calendar.MONTH)).get(calendar.get(Calendar.DAY_OF_MONTH)-1);
+        return day_costs.get(calendar.get(Calendar.MONTH)).get(calendar.get(Calendar.DATE)-1);
     }
 
 }

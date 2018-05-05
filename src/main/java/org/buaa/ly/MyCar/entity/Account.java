@@ -5,6 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.ToString;
 import org.buaa.ly.MyCar.entity.deserilizer.StoreDeserializer;
 import org.buaa.ly.MyCar.entity.serializer.StoreSerializer;
 import org.hibernate.annotations.DynamicInsert;
@@ -37,9 +38,13 @@ public class Account implements Serializable {
     private String phone;
 
     @ManyToOne
-    @JoinColumn(name = "sid")
-    @JSONField(name = "sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
+    @JoinColumn(name = "sid", insertable = false, updatable = false)
+    //@JSONField(name = "sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
+    @JSONField(serialize = false, deserialize = false)
     private Store store;
+
+    @Column(name = "sid")
+    private Integer sid;
 
     @Column(name = "role")
     private Integer role;

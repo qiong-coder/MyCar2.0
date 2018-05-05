@@ -26,10 +26,14 @@ public class Vehicle implements Serializable {
     @Column(name = "id")
     Integer id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "viid", referencedColumnName = "id")
-    @JSONField(serializeUsing = VehicleInfoSerializer.class, deserializeUsing = VehicleInfoDeserializer.class)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "viid", referencedColumnName = "id", insertable = false, updatable = false)
+    @JSONField(serialize = false, deserialize = false)
+    //@JSONField(serializeUsing = VehicleInfoSerializer.class, deserializeUsing = VehicleInfoDeserializer.class)
     VehicleInfo vehicleInfo;
+
+    @Column(name = "viid")
+    Integer viid;
 
     @OneToMany(mappedBy = "vehicle")
     @JSONField(deserialize = false, serialize = false)
@@ -42,6 +46,7 @@ public class Vehicle implements Serializable {
     String description;
 
     @Column(name = "status")
+    @GeneratedValue
     Integer status;
 
     @Column(name = "begin")
@@ -50,9 +55,12 @@ public class Vehicle implements Serializable {
     @Column(name = "end")
     Timestamp endTime;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "sid", referencedColumnName = "id")
-    @JSONField(serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sid", referencedColumnName = "id", insertable = false, updatable = false)
+    @JSONField(serialize = false, deserialize = false)
+    //@JSONField(serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
     Store store;
 
+    @Column(name = "sid")
+    Integer sid;
 }

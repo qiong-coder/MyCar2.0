@@ -1,6 +1,7 @@
 package org.buaa.ly.MyCar.http.dto;
 
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,6 +16,7 @@ public class AccountDTO extends DTOBase {
 
     String username;
 
+    @JSONField(deserialize = false)
     String password;
 
     String name;

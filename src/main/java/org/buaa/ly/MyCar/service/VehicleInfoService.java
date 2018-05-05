@@ -7,14 +7,14 @@ import java.util.List;
 
 public interface VehicleInfoService {
 
-    List<VehicleInfoDTO> findByStatusNot(Integer status);
+    VehicleInfoDTO find(int id);
+
+    List<VehicleInfoDTO> find(List<Integer> status, boolean exclude);
 
     VehicleInfoDTO insert(VehicleInfoDTO vehicleInfoDTO, Part attachment);
 
-    VehicleInfoDTO update(int id, VehicleInfoDTO vehicleInfoDTO, Part attachment);
+    VehicleInfoDTO update(VehicleInfoDTO vehicleInfoDTO, Part attachment);
 
-    VehicleInfoDTO find(int id);
-
-    VehicleInfoDTO delete(int id, int force);
+    VehicleInfoDTO delete(int id, boolean force);
 
 }

@@ -7,6 +7,10 @@ import lombok.EqualsAndHashCode;
 import org.buaa.ly.MyCar.entity.VehicleInfo;
 import org.buaa.ly.MyCar.internal.VehicleInfoCost;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -40,6 +44,14 @@ public class VehicleInfoDTO extends DTOBase {
 
     public static VehicleInfoDTO build(VehicleInfo vehicleInfo) {
         return build(vehicleInfo, VehicleInfoDTO.class);
+    }
+
+    public static <K> Map<K, VehicleInfoDTO> build(Map<K, VehicleInfo> vehicleInfoMap) {
+        return build(vehicleInfoMap, VehicleInfoDTO.class);
+    }
+
+    public static List<VehicleInfoDTO> build(Collection<VehicleInfo> vehicleInfoCollection) {
+        return build(vehicleInfoCollection, VehicleInfoDTO.class);
     }
 
     public VehicleInfo build() {

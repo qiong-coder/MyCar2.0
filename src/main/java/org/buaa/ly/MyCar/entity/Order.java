@@ -29,14 +29,22 @@ public class Order implements Serializable {
     private String oid;
 
     @ManyToOne
-    @JoinColumn(name = "viid", nullable = false)
-    @JSONField(name = "viid", serializeUsing = VehicleInfoSerializer.class, deserializeUsing = VehicleInfoDeserializer.class)
+    @JoinColumn(name = "viid", nullable = false, insertable = false, updatable = false)
+    //@JSONField(name = "viid", serializeUsing = VehicleInfoSerializer.class, deserializeUsing = VehicleInfoDeserializer.class)
+    @JSONField(serialize = false, deserialize = false)
     private VehicleInfo vehicleInfo;
 
+    @Column(name = "viid", nullable = false)
+    private Integer viid;
+
     @ManyToOne
-    @JoinColumn(name = "vid")
-    @JSONField(name = "vid", serializeUsing = VehicleSerializer.class, deserializeUsing = VehicleDeserializer.class)
+    @JoinColumn(name = "vid", insertable = false, updatable = false)
+    //@JSONField(name = "vid", serializeUsing = VehicleSerializer.class, deserializeUsing = VehicleDeserializer.class)
+    @JSONField(serialize = false, deserialize = false)
     private Vehicle vehicle;
+
+    @Column(name = "vid")
+    private Integer vid;
 
     @Column(name = "begin")
     @JSONField(name = "begin")
@@ -47,14 +55,23 @@ public class Order implements Serializable {
     private Timestamp endTime;
 
     @ManyToOne
-    @JoinColumn(name = "rent_sid", nullable = false)
-    @JSONField(name = "rent_sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
+    @JoinColumn(name = "rent_sid", nullable = false, insertable = false, updatable = false)
+    //@JSONField(name = "rent_sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
+    @JSONField(serialize = false, deserialize = false)
     private Store rentStore;
 
+    @Column(name = "rent_sid")
+    private Integer rentSid;
+
+
     @ManyToOne
-    @JoinColumn(name = "return_sid", nullable = false)
-    @JSONField(name = "return_sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
+    @JoinColumn(name = "return_sid", nullable = false, insertable = false, updatable = false)
+    //@JSONField(name = "return_sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
+    @JSONField(serialize = false, deserialize = false)
     private Store returnStore;
+
+    @Column(name = "return_sid")
+    private Integer returnSid;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -92,14 +109,22 @@ public class Order implements Serializable {
     private Timestamp realEndTime;
 
     @ManyToOne()
-    @JoinColumn(name = "rrent_sid")
-    @JSONField(name = "rrent_sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
+    @JoinColumn(name = "rrent_sid", insertable = false, updatable = false)
+    //@JSONField(name = "rrent_sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
+    @JSONField(serialize = false, deserialize = false)
     private Store realRentStore;
 
+    @Column(name = "rrent_sid")
+    private Integer realRentSid;
+
     @ManyToOne
-    @JoinColumn(name = "rreturn_sid")
-    @JSONField(name = "rreturn_sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
+    @JoinColumn(name = "rreturn_sid", insertable = false, updatable = false)
+    @JSONField(serialize = false, deserialize = false)
+    //@JSONField(name = "rreturn_sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
     private Store realReturnStore;
+
+    @Column(name = "rreturn_sid")
+    private Integer realReturnSid;
 
     @Column(name = "distance")
     private Integer distance;

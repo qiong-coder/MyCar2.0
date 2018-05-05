@@ -18,8 +18,10 @@
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
     <spring.version>5.0.5.RELEASE</spring.version>
+    <spring.security.version>5.0.4.RELEASE</spring.security.version>
     <jackson.version>2.9.5</jackson.version>
     <spring.data.jpa.version>2.0.6.RELEASE</spring.data.jpa.version>
+    <spring.data.redis.version>2.0.6.RELEASE</spring.data.redis.version>
     <querydsl.version>4.1.4</querydsl.version>
   </properties>
 
@@ -38,9 +40,27 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>${spring.security.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+      <version>${spring.security.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-jpa</artifactId>
       <version>${spring.data.jpa.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-redis</artifactId>
+      <version>${spring.data.redis.version}</version>
     </dependency>
 
     <dependency>
@@ -117,6 +137,23 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.4.197</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/com.jayway.jsonpath/json-path -->
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+      <version>2.4.0</version>
+      <scope>test</scope>
+    </dependency>
+
 
   </dependencies>
 

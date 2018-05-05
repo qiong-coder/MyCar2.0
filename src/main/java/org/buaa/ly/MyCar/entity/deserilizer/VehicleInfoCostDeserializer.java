@@ -12,7 +12,8 @@ public class VehicleInfoCostDeserializer implements ObjectDeserializer {
 
     @Override
     public <T> T deserialze(DefaultJSONParser defaultJSONParser, Type type, Object o) {
-        return (T)JSON.parseObject((String)o, VehicleInfoCost.class);
+        VehicleInfoCost vehicleInfoCost = defaultJSONParser.parseObject(VehicleInfoCost.class);
+        return (T)JSON.toJSONString(vehicleInfoCost);
     }
 
     @Override

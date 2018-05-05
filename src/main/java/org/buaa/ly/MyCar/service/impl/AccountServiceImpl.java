@@ -7,6 +7,7 @@ import org.buaa.ly.MyCar.exception.*;
 import org.buaa.ly.MyCar.http.dto.AccountDTO;
 import org.buaa.ly.MyCar.logic.AccountLogic;
 import org.buaa.ly.MyCar.service.AccountService;
+import org.buaa.ly.MyCar.utils.BasicAuthUtils;
 import org.buaa.ly.MyCar.utils.Md5;
 import org.buaa.ly.MyCar.utils.RoleEnum;
 import org.buaa.ly.MyCar.utils.StatusEnum;
@@ -24,7 +25,7 @@ import java.security.NoSuchAlgorithmException;
 
 @Component("accountServiceImpl")
 @Slf4j
-@Transactional
+//@Transactional
 @PersistenceContext(type = PersistenceContextType.EXTENDED)
 public class AccountServiceImpl implements AccountService {
 
@@ -33,22 +34,18 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountDTO login(HttpServletRequest request, String username, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
-        HttpSession session = request.getSession(true);
-
         Account account = accountLogic.find(username);
 
         if ( account == null || account.getStatus() == StatusEnum.DELETE.getStatus() )
             throw new NotFoundError(String.format("failure to find account - %s", username));
 
-        if ( account.getPassword().compareTo(password) != 0 )
+        String credential = BasicAuthUtils.basicAuth(account.getUsername(), account.getPassword());
+
+        if ( credential.compareTo(BasicAuthUtils.basicAuth(username, password)) != 0 )
             throw new LoginError();
 
         AccountDTO accountDTO = AccountDTO.build(account);
-        accountDTO.setToken(Md5.md5(String.format("%s-%d", username, System.currentTimeMillis())));
-
-        session.setAttribute("token", accountDTO.getToken());
-        session.setAttribute("role", accountDTO.getRole());
-        session.setAttribute("username", accountDTO.getUsername());
+        accountDTO.setToken(credential);
 
         return accountDTO;
     }
@@ -92,7 +89,7 @@ public class AccountServiceImpl implements AccountService {
         if ( a != null && a.getStatus() == StatusEnum.DELETE.getStatus() )
             throw new DuplicateError();
 
-        if ( a == null ) return AccountDTO.build(accountLogic.insert(AccountDTO.build(accountDTO,Account.class)));
+        if ( a == null ) return AccountDTO.build(accountLogic.insert(AccountDTO.build(accountDTO, Account.class)));
         else return AccountDTO.build(accountLogic.setStatus(accountDTO.getUsername(), StatusEnum.OK.getStatus()));
     }
 
@@ -108,8 +105,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDTO update(String username, AccountDTO accountDTO) {
-        accountDTO.setUsername(username);
+    public AccountDTO update(AccountDTO accountDTO) {
 
         Account account = accountLogic.update(accountDTO.build());
 

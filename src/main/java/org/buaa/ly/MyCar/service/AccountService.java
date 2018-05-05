@@ -2,6 +2,7 @@ package org.buaa.ly.MyCar.service;
 
 import org.buaa.ly.MyCar.http.dto.AccountDTO;
 import org.buaa.ly.MyCar.utils.RoleEnum;
+import org.springframework.security.access.annotation.Secured;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -19,7 +20,7 @@ public interface AccountService {
 
     AccountDTO find(String username);
 
-    AccountDTO update(String username, AccountDTO accountDTO);
+    AccountDTO update(AccountDTO accountDTO);
 
     void delete(String username);
 

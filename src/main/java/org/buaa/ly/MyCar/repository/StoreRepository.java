@@ -7,4 +7,11 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface StoreRepository extends PagingAndSortingRepository<Store, Integer>,
         JpaSpecificationExecutor<Store> {
+
+    Store findById(int id);
+
+    Store deleteById(int id);
+
+    int countById(int id);
+
 }

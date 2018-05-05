@@ -80,16 +80,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrdersAndVehiclesAndVehicleInfos findByStatusAndVehiclesAndVehicleInfos(Integer status) {
 
-        List<OrderDTO> orders = Lists.newArrayList();
-        Map<Integer, VehicleDTO> vehicleDTOMap = Maps.newHashMap();
-        Map<Integer, VehicleInfoDTO> vehicleInfoDTOMap = Maps.newConcurrentMap();
+        List<Order> orders = Lists.newArrayList();
+        Map<Integer, Vehicle> vehicleMap = Maps.newHashMap();
+        Map<Integer, VehicleInfo> vehicleInfoMap = Maps.newConcurrentMap();
 
-        orderLogic.findByViidAndStatus(null, status, orders, vehicleDTOMap, vehicleInfoDTOMap);
+        orderLogic.findByViidAndStatus(null, status, orders, vehicleMap, vehicleInfoMap);
 
         return OrdersAndVehiclesAndVehicleInfos.builder()
-                .orders(orders)
-                .vehicles(vehicleDTOMap)
-                .vehicleInfos(vehicleInfoDTOMap)
+                .orders(OrderDTO.build(orders))
+                .vehicles(VehicleDTO.build(vehicleMap))
+                .vehicleInfos(VehicleInfoDTO.build(vehicleInfoMap))
                 .build();
     }
 
@@ -266,7 +266,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         List<Order> orders = orderLogic.findHistoryOrders(viid, vid, begin, end,
-                Lists.newArrayList(StatusEnum.RENTING.getStatus(), StatusEnum.DRAWBACK.getStatus(), StatusEnum.FINISHED.getStatus()));
+                Lists.newArrayList(StatusEnum.DRAWBACK.getStatus(), StatusEnum.FINISHED.getStatus()));
 
         int ret_day_total = 0;
 
@@ -309,8 +309,8 @@ public class OrderServiceImpl implements OrderService {
 
         List<Order> orders = orderLogic.findScheduleOrders(viid, sid, begin, end);
 
-        Map<Integer, VehicleInfo> vehicleInfoMap = vehicleInfoLogic.findVehicleInfoMap(viid);
-        Map<Integer, Map<Integer, Integer>> storeVehicleInfoCountMap = vehicleLogic.countByStoreAndVehicleInfoAndStatusNot(viid, sid, StatusEnum.DELETE.getStatus());
+        Map<Integer, VehicleInfo> vehicleInfoMap = Maps.newHashMap(); //vehicleInfoLogic.findVehicleInfoMap(viid);
+        Map<Integer, Map<Integer, Integer>> storeVehicleInfoCountMap = Maps.newHashMap();// = vehicleLogic.countByStoreAndVehicleInfoAndStatusNot(viid, sid, StatusEnum.DELETE.getStatus());
         Map<Integer, Map<Integer, int[]>> storeVehicleInfoUseMap = Maps.newHashMap();
         int days = TimeUtils.days(begin, end) + 1;
 
@@ -419,7 +419,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderConflict conflict(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
-        Map<Integer, Map<Integer, Integer>> storeVehicleInfoCountMap = vehicleLogic.countByStoreAndVehicleInfoAndStatusNot(viid, sid, StatusEnum.DELETE.getStatus());
+        //Map<Integer, Map<Integer, Integer>> storeVehicleInfoCountMap = vehicleLogic.countByStoreAndVehicleInfoAndStatusNot(viid, sid, StatusEnum.DELETE.getStatus());
+
 
 
 

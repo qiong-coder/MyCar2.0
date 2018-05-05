@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sun.imageio.plugins.common.LZWCompressor;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "Store")
 @DynamicInsert
+@ToString(exclude = {"vehicles", "rentOrders", "returnOrders", "realRentOrders", "realReturnOrders"})
 public class Store implements Serializable {
 
     @Id

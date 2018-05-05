@@ -10,4 +10,6 @@ public interface VehicleInfoCostLogic  {
 
     VehicleInfoCost update(int id, VehicleInfoCost vehicleInfoCost);
 
+    VehicleInfoCost defaultCost();
+
 }

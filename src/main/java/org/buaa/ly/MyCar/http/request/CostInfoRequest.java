@@ -32,10 +32,11 @@ public class CostInfoRequest extends VehicleInfoCost {
         return lists;
     }
 
-    public static CostInfoRequest build(int day_cost, int discount) {
+    public static CostInfoRequest build(int day_cost, int discount, List<Integer> insurance) {
         CostInfoRequest costInfoRequest = new CostInfoRequest();
         costInfoRequest.setDiscount(discount);
         costInfoRequest.setDay_cost(day_cost);
+        if ( insurance != null ) costInfoRequest.setInsurance(insurance);
         return costInfoRequest.build();
     }
 

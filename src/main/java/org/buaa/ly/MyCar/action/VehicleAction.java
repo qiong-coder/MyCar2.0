@@ -2,7 +2,6 @@ package org.buaa.ly.MyCar.action;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.buaa.ly.MyCar.entity.Vehicle;
 import org.buaa.ly.MyCar.http.HttpResponse;
 import org.buaa.ly.MyCar.http.dto.VehicleDTO;
 import org.buaa.ly.MyCar.service.AccountService;
@@ -12,63 +11,64 @@ import org.buaa.ly.MyCar.utils.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
+import java.util.List;
 
 @RestController
 @Slf4j
+
 public class VehicleAction {
 
     @Autowired private AccountService accountService;
 
     @Autowired private VehicleService vehicleService;
 
-    @RequestMapping(value = "/vehicles/", method = RequestMethod.GET)
-    public HttpResponse findByStatusNot()
-    {
-        return new HttpResponse(vehicleService.findByStatusNot(StatusEnum.DELETE.getStatus()));
-    }
-
-
-    @RequestMapping(value = "/vehicles/{viid}/", method = RequestMethod.GET)
-    public HttpResponse findByViid(@PathVariable int viid) {
-        return new HttpResponse(vehicleService.findByViidAndStatusNot(viid, 0));
-    }
-
-    @RequestMapping(value = "/vehicles/{viid}/{sid}/{status}/", method = RequestMethod.GET)
-    public HttpResponse findByViidAndSidAndStatus(@PathVariable int viid,
-                                                  @PathVariable int sid,
-                                                  @PathVariable int status) {
-        return new HttpResponse(vehicleService.findByViidAndSidAndStatus(viid, sid, status));
-    }
-
     @RequestMapping(value = "/vehicle/{id}/", method = RequestMethod.GET)
-    public HttpResponse findById(@PathVariable int id) {
+    public HttpResponse find(@PathVariable int id) {
         return new HttpResponse(vehicleService.find(id));
     }
 
-    @RequestMapping(value = "/vehicle/{viid}/", method = RequestMethod.POST)
-    public HttpResponse insert(HttpServletRequest request,
-                               @PathVariable int viid,
-                               @RequestBody VehicleDTO vehicleDTO) {
-        accountService.check(request, RoleEnum.OPERATOR);
-        return new HttpResponse(vehicleService.insert(viid, vehicleDTO));
+    @RequestMapping(value = {"/vehicles"}, method = RequestMethod.GET)
+    public HttpResponse find(@RequestParam(required = false) Integer sid,
+                             @RequestParam(required = false) Integer viid,
+                             @RequestParam(required = false) List<Integer> status,
+                             @RequestParam(required = false, defaultValue = "false") boolean exclude)
+    {
+        return new HttpResponse(vehicleService.findBySidAndViidAndStatus(sid, viid, status, exclude));
     }
 
-    @RequestMapping(value = "/vehicle/{id}/", method = RequestMethod.PUT)
-    public HttpResponse update(HttpServletRequest request,
-                               @PathVariable int id,
+    @RequestMapping(value = "/vehicles/{viid}/{sid}/{begin}/{end}/", method = RequestMethod.GET)
+    public HttpResponse findByViidAndTimestamp(@PathVariable int viid,
+                                               @PathVariable int sid,
+                                               @PathVariable Timestamp begin,
+                                               @PathVariable Timestamp end) {
+        //TODO: 按时间和车型进行排查
+        return new HttpResponse(vehicleService.findByViidAndSidAndTimestamp(viid, sid, begin, end));
+    }
+
+
+    @RequestMapping(value = "/vehicle/", method = RequestMethod.POST)
+    public HttpResponse insert(HttpServletRequest request,
                                @RequestBody VehicleDTO vehicleDTO) {
         accountService.check(request, RoleEnum.OPERATOR);
-        vehicleService.update(id, vehicleDTO);
+        return new HttpResponse(vehicleService.insert(vehicleDTO));
+    }
+
+    @RequestMapping(value = "/vehicle/", method = RequestMethod.PUT)
+    public HttpResponse update(HttpServletRequest request,
+                               @RequestBody VehicleDTO vehicleDTO) {
+        accountService.check(request, RoleEnum.OPERATOR);
+        vehicleService.update(vehicleDTO);
         return new HttpResponse();
     }
 
-    @RequestMapping(value = "/vehicle/{id}/{force}/", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/vehicle/{id}/", method = RequestMethod.DELETE)
     public HttpResponse delete(HttpServletRequest request,
-                               @PathVariable int id,
-                               @PathVariable int force) {
+                               @PathVariable int id) {
         accountService.check(request, RoleEnum.OPERATOR);
-        if ( force == 0 ) {
+        if ( true ) {
             vehicleService.update(id, StatusEnum.DELETE.getStatus());
         } else {
             vehicleService.delete(id);

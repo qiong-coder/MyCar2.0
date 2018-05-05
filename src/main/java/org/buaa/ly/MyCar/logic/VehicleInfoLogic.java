@@ -9,9 +9,7 @@ public interface VehicleInfoLogic {
 
     VehicleInfo find(int id);
 
-    List<VehicleInfo> findByStatusNot(Integer status);
-
-    Map<Integer, VehicleInfo> findVehicleInfoMap(Integer viid);
+    List<VehicleInfo> find(List<Integer> status, boolean exclude);
 
     VehicleInfo insert(VehicleInfo vehicleInfo);
 
