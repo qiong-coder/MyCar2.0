@@ -42,7 +42,7 @@ public class MessageServiceImpl implements MessageService {
             throw new CodeRequestTimeoutError();
         }
 
-        String code = Integer.toString((int)(Math.random()*10000)); //TelVerificationUtil.SendCode(phone);
+        String code = String.format("%4.0f",Math.random()*10000); //TelVerificationUtil.SendCode(phone);
 
         if ( code == null ) throw new SendCodeError();
 
@@ -57,7 +57,7 @@ public class MessageServiceImpl implements MessageService {
 
         if ( c == null ) throw new CodeNotFoundError();
 
-        if ( c.compareTo(code) != 0 ) throw new CodeCheckErrror();
+        if ( c.compareToIgnoreCase(code) != 0 ) throw new CodeCheckErrror();
 
         redisService.deletePhoneCode(phone);
     }
@@ -83,7 +83,7 @@ public class MessageServiceImpl implements MessageService {
 
         if ( c == null ) throw new CodeNotFoundError();
 
-        if ( c.compareTo(code) != 0 ) throw new CodeCheckErrror();
+        if ( c.compareToIgnoreCase(code) != 0 ) throw new CodeCheckErrror();
 
         redisService.deletePicture(picture);
 
