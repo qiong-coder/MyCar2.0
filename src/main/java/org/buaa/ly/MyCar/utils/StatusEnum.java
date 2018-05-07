@@ -7,11 +7,11 @@ public enum StatusEnum {
     PENDING(1),
     RENTING(2),
     DRAWBACK(3),
+    FIXING(3),
     FINISHED(4),
+    VALIDATE(4),
     CANCELED(5),
-    FIXING(2),
-    VALIDATE(3),
-    SPARE(4),
+    SPARE(5),
     DELETE(10);
 
     private final int status;

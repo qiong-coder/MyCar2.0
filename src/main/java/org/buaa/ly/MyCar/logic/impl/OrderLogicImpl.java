@@ -43,23 +43,26 @@ public class OrderLogicImpl implements OrderLogic {
     }
 
     @Override
-    public List<Order> findByViidAndStatus(Integer viid, Integer status) {
-        QOrder order = QOrder.order;
+    public List<Order> find(Integer sid, Integer viid, Integer status) {
+        QOrder qOrder = QOrder.order;
+
         BooleanExpression expression = null;
-        if ( viid != null ) expression = order.vehicleInfo.id.eq(viid);
-        if ( status != null ) {
-            if (expression != null) expression.and(order.status.eq(status));
-            else expression = order.status.eq(status);
-        }
+
+        if ( sid != null ) expression = qOrder.rentSid.eq(sid);
+
+        if ( viid != null ) expression = expression == null ? qOrder.viid.eq(viid) : expression.and(qOrder.viid.eq(viid));
+
+        if ( status != null ) expression = expression != null? expression.and(qOrder.status.eq(status)) : qOrder.status.eq(status);
+
         if ( expression != null ) return Lists.newArrayList(orderRepository.findAll(expression));
         else return Lists.newArrayList(orderRepository.findAll());
     }
 
     @Override
-    public void findByViidAndStatus(Integer viid, Integer status, List<Order> orderDTOS,
-                                    Map<Integer, Vehicle> vehicleMap,
-                                    Map<Integer, VehicleInfo> vehicleInfoMap) {
-        List<Order> orders = findByViidAndStatus(viid, status);
+    public void find(Integer sid, Integer viid, Integer status, List<Order> orderDTOS,
+                     Map<Integer, Vehicle> vehicleMap,
+                     Map<Integer, VehicleInfo> vehicleInfoMap) {
+        List<Order> orders = find(sid, viid, status);
 
         for ( Order order : orders ) {
             orders.add(order);
@@ -71,6 +74,26 @@ public class OrderLogicImpl implements OrderLogic {
             if ( vehicleInfo != null ) vehicleInfoMap.put(vehicleInfo.getId(), vehicleInfo);
         }
 
+    }
+
+    @Override
+    public List<Order> find(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
+
+        QOrder qOrder = QOrder.order;
+
+        BooleanExpression expression = null;
+
+        if ( sid != null ) {
+            expression = qOrder.status.eq(StatusEnum.RENTING.getStatus()).and(qOrder.realReturnSid.eq(sid))
+                    .or(qOrder.status.eq(StatusEnum.PENDING.getStatus()).and(qOrder.beginTime.lt(end).and(qOrder.endTime.gt(begin))).and(qOrder.returnSid.eq(sid)));
+        } else {
+            expression = qOrder.status.eq(StatusEnum.RENTING.getStatus())
+                    .or(qOrder.status.eq(StatusEnum.PENDING.getStatus()).and(qOrder.beginTime.lt(end).and(qOrder.endTime.gt(begin))));
+        }
+
+        if ( viid != null ) expression = expression == null ? qOrder.viid.eq(viid) : expression.and(qOrder.viid.eq(viid));
+
+        return Lists.newArrayList(orderRepository.findAll(expression));
     }
 
     @Override
@@ -126,7 +149,7 @@ public class OrderLogicImpl implements OrderLogic {
 
     @Override
     public void countByStatus(Integer status, Map<Integer, Integer> statusCount) {
-        List<Order> orders = findByViidAndStatus(null, status);
+        List<Order> orders = find(null, null, status);
         for ( Order order : orders ) {
             Integer count = statusCount.get(order.getStatus());
             if ( count == null ) count = 1;

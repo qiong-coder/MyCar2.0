@@ -54,7 +54,7 @@ public class VehicleInfoAction {
                              @PathVariable Timestamp begin,
                              @PathVariable Timestamp end) {
         //TODO: 完成时间排查车型返回
-        return new HttpResponse(vehicleInfoService.find(Lists.newArrayList(0),false));
+        return new HttpResponse(vehicleInfoService.find(sid, begin, end));
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

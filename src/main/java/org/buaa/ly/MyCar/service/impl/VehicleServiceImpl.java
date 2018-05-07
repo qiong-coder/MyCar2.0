@@ -1,6 +1,7 @@
 package org.buaa.ly.MyCar.service.impl;
 
 
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.entity.Order;
 import org.buaa.ly.MyCar.entity.Vehicle;
@@ -11,6 +12,7 @@ import org.buaa.ly.MyCar.logic.OrderLogic;
 import org.buaa.ly.MyCar.logic.VehicleInfoLogic;
 import org.buaa.ly.MyCar.logic.VehicleLogic;
 import org.buaa.ly.MyCar.service.VehicleService;
+import org.buaa.ly.MyCar.utils.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 @Component("vehicleService")
@@ -62,7 +65,24 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public List<VehicleDTO> findByViidAndSidAndTimestamp(int viid, int sid, Timestamp begin, Timestamp end) {
         // TODO: 实际的检测逻辑
-        return VehicleDTO.build(vehicleLogic.find(sid, viid, null, false));
+
+        List<Vehicle> vehicles = vehicleLogic.find(sid, viid, Lists.newArrayList(StatusEnum.DELETE.getStatus()), true);
+
+        Iterator<Vehicle> iterator = vehicles.iterator();
+
+        while ( iterator.hasNext() ) {
+            Vehicle vehicle = iterator.next();
+
+            int status = vehicle.getStatus();
+
+            if ( status == StatusEnum.OK.getStatus() || status == StatusEnum.SPARE.getStatus() ) continue;
+            if ( (status == StatusEnum.RENTING.getStatus() || status == StatusEnum.VALIDATE.getStatus())
+                    && (vehicle.getEndTime().compareTo(begin) < 0 || vehicle.getBeginTime().compareTo(end) > 0) ) continue;
+
+            iterator.remove();
+        }
+
+        return VehicleDTO.build(vehicles);
     }
 
     @Override

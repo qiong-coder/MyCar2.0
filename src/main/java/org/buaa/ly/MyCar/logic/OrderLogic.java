@@ -15,12 +15,14 @@ public interface OrderLogic {
 
     Order find(int id);
 
-    List<Order> findByViidAndStatus(Integer viid, Integer status);
+    List<Order> find(Integer sid, Integer viid, Integer status);
 
-    void findByViidAndStatus(Integer viid, Integer status,
-                             List<Order> orderDTOS,
-                             Map<Integer, Vehicle> vehicleDTOMap,
-                             Map<Integer, VehicleInfo> vehicleInfoDTOMap);
+    void find(Integer sid, Integer viid, Integer status,
+              List<Order> orders,
+              Map<Integer, Vehicle> vehicleMap,
+              Map<Integer, VehicleInfo> vehicleInfoMap);
+
+    List<Order> find(Integer sid, Integer viid, Timestamp begin, Timestamp end);
 
     List<Order> findHistoryOrders(Integer viid, Integer vid, Timestamp begin, Timestamp end, List<Integer> status);
 

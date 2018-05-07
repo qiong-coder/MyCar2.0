@@ -84,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
         Map<Integer, Vehicle> vehicleMap = Maps.newHashMap();
         Map<Integer, VehicleInfo> vehicleInfoMap = Maps.newConcurrentMap();
 
-        orderLogic.findByViidAndStatus(null, status, orders, vehicleMap, vehicleInfoMap);
+        orderLogic.find(null, null, status, orders, vehicleMap, vehicleInfoMap);
 
         return OrdersAndVehiclesAndVehicleInfos.builder()
                 .orders(OrderDTO.build(orders))
@@ -224,7 +224,7 @@ public class OrderServiceImpl implements OrderService {
 
         Vehicle vehicle = order.getVehicle();
         if ( vehicle == null ) throw new NotFoundError("failure to find the vehicle");
-        vehicle.setStatus(StatusEnum.OK.getStatus());
+        if ( vehicle.getStatus() == StatusEnum.RENTING.getStatus() ) vehicle.setStatus(StatusEnum.OK.getStatus());
         vehicle.setStore(order.getRealReturnStore());
 
         return OrderDTO.build(order);
@@ -243,12 +243,15 @@ public class OrderServiceImpl implements OrderService {
         return OrderDTO.build(order);
     }
 
+    @Modifying
     @Override
     public OrderDTO cancel(int id, OrderDTO orderDTO) {
         Order order = find(id);
 
         orderDTO.setStatus(StatusEnum.CANCELED.getStatus());
         merge(orderDTO, order);
+
+        if ( order.getVid() != null ) vehicleLogic.updateStatus(order.getVid(), StatusEnum.OK.getStatus());
 
         return OrderDTO.build(order);
     }
@@ -420,8 +423,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderConflict conflict(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
         //Map<Integer, Map<Integer, Integer>> storeVehicleInfoCountMap = vehicleLogic.countByStoreAndVehicleInfoAndStatusNot(viid, sid, StatusEnum.DELETE.getStatus());
-
-
 
 
         return null;
