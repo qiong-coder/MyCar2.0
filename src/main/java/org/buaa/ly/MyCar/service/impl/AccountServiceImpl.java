@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 
 @Component("accountServiceImpl")
@@ -105,6 +106,11 @@ public class AccountServiceImpl implements AccountService {
 
         if ( a == null ) return AccountDTO.build(accountLogic.insert(AccountDTO.build(accountDTO, Account.class)));
         else return AccountDTO.build(accountLogic.setStatus(accountDTO.getUsername(), StatusEnum.OK.getStatus()));
+    }
+
+    @Override
+    public List<AccountDTO> findAll() {
+        return AccountDTO.build(accountLogic.findAll());
     }
 
     @Override

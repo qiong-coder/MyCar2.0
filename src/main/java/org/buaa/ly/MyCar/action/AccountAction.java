@@ -43,12 +43,13 @@ public class AccountAction {
         return new HttpResponse();
     }
 
-    @RequestMapping(value = "/{username}/", method = RequestMethod.GET)
+    @RequestMapping(value = {"/{username}/", "/"}, method = RequestMethod.GET)
     public HttpResponse find(@RequestHeader String token,
-                             @PathVariable String username) {
+                             @PathVariable(required = false) String username) {
         accountService.check(token, RoleEnum.OPERATOR);
-
-        return new HttpResponse(accountService.find(username));
+        if ( username != null )
+            return new HttpResponse(accountService.find(username));
+        else return new HttpResponse(accountService.findAll());
     }
 
     @RequestMapping(value = "/", method = RequestMethod.PUT)

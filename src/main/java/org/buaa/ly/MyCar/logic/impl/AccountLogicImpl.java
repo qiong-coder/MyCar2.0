@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Component("accountLogic")
 @Slf4j
@@ -27,6 +29,11 @@ public class AccountLogicImpl implements AccountLogic {
     @Override
     public Account find(String username) {
         return accountRepository.findByUsername(username);
+    }
+
+    @Override
+    public List<Account> findAll() {
+        return accountRepository.findAll();
     }
 
     @Override

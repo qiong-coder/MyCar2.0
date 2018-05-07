@@ -8,6 +8,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.buaa.ly.MyCar.entity.Account;
 
+import java.util.Collection;
+import java.util.List;
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -38,6 +41,10 @@ public class AccountDTO extends DTOBase {
 
     static public AccountDTO build(Account account) {
         return build(account, AccountDTO.class);
+    }
+
+    static public List<AccountDTO> build(Collection<Account> accounts) {
+        return build(accounts, AccountDTO.class);
     }
 
     @Override

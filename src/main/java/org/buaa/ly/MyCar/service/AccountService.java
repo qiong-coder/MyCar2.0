@@ -7,6 +7,7 @@ import org.springframework.security.access.annotation.Secured;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public interface AccountService {
 
@@ -17,6 +18,8 @@ public interface AccountService {
     void logout(String token);
 
     AccountDTO insert(AccountDTO accountDTO);
+
+    List<AccountDTO> findAll();
 
     AccountDTO find(String username);
 
