@@ -1,6 +1,7 @@
 package org.buaa.ly.MyCar.http.dto;
 
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,6 +41,9 @@ public class VehicleInfoDTO extends DTOBase {
     VehicleInfoCostDTO cost;
 
     Integer status;
+
+    @JSONField(name = "vehicle_count")
+    Long vehicleCount;
 
     public static VehicleInfoDTO build(VehicleInfo vehicleInfo) {
         return build(vehicleInfo, VehicleInfoDTO.class);

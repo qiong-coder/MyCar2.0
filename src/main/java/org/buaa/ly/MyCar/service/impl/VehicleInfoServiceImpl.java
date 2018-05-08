@@ -103,7 +103,11 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
 
     @Override
     public List<VehicleInfoDTO> find(List<Integer> status, boolean exclude) {
-        return VehicleInfoDTO.build(vehicleInfoLogic.find(status, exclude));
+        List<VehicleInfoDTO> vehicleInfoDTOS = VehicleInfoDTO.build(vehicleInfoLogic.find(status, exclude));
+        for ( VehicleInfoDTO vehicleInfoDTO : vehicleInfoDTOS ) {
+            vehicleInfoDTO.setVehicleCount(vehicleLogic.count(null,vehicleInfoDTO.getId(),status,exclude));
+        }
+        return vehicleInfoDTOS;
     }
 
     @Override

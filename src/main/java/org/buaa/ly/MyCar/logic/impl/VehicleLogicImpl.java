@@ -55,6 +55,28 @@ public class VehicleLogicImpl implements VehicleLogic {
     }
 
     @Override
+    public long count(Integer sid, Integer viid, Collection<Integer> status, boolean exclude) {
+        QVehicle qVehicle = QVehicle.vehicle;
+
+        BooleanExpression expression = null;
+
+        if ( sid != null ) expression = qVehicle.sid.eq(sid);
+
+        if ( viid != null ) expression = expression == null ? qVehicle.viid.eq(viid) : expression.and(qVehicle.viid.eq(viid));
+
+        if ( status != null ) {
+            if ( !exclude ) {
+                expression = expression == null ? qVehicle.status.in(status) : expression.and(qVehicle.status.in(status));
+            } else {
+                expression = expression == null ? qVehicle.status.in(status) : expression.and(qVehicle.status.in(status).not());
+            }
+        }
+        if ( expression != null ) return vehicleRepository.count(expression);
+        return vehicleRepository.count();
+
+    }
+
+    @Override
     public List<Vehicle>  find(Integer sid, Integer viid, Collection<Integer> status, boolean exclude) {
 
         QVehicle qVehicle = QVehicle.vehicle;
