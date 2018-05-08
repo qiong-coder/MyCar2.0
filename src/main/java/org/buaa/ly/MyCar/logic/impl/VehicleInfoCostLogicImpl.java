@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.entity.VehicleInfo;
-import org.buaa.ly.MyCar.http.request.CostInfoRequest;
+import org.buaa.ly.MyCar.http.dto.VehicleInfoCostDTO;
 import org.buaa.ly.MyCar.internal.VehicleInfoCost;
 import org.buaa.ly.MyCar.logic.VehicleInfoCostLogic;
 import org.buaa.ly.MyCar.repository.VehicleInfoRepository;
@@ -51,7 +51,7 @@ public class VehicleInfoCostLogicImpl implements VehicleInfoCostLogic {
         if ( vehicleInfo == null ) return null;
 
         if ( vehicleInfo.getCost() == null ) {
-            return update(id, CostInfoRequest.build(10000, 100, null));
+            return update(id, VehicleInfoCostDTO.build(10000, 100, null));
         } else {
             return JSONObject.parseObject(vehicleInfo.getCost(), VehicleInfoCost.class);
         }
@@ -80,7 +80,7 @@ public class VehicleInfoCostLogicImpl implements VehicleInfoCostLogic {
     }
 
     @Override
-    public VehicleInfoCost defaultCost() {
-        return CostInfoRequest.build(cost, discount, parseInsurance());
+    public VehicleInfoCostDTO defaultCost() {
+        return VehicleInfoCostDTO.build(cost, discount, parseInsurance());
     }
 }

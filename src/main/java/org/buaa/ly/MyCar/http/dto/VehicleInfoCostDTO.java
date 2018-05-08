@@ -1,4 +1,4 @@
-package org.buaa.ly.MyCar.http.request;
+package org.buaa.ly.MyCar.http.dto;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class CostInfoRequest extends VehicleInfoCost {
+public class VehicleInfoCostDTO extends VehicleInfoCost {
 
     Integer day_cost;
 
@@ -32,16 +32,16 @@ public class CostInfoRequest extends VehicleInfoCost {
         return lists;
     }
 
-    public static CostInfoRequest build(int day_cost, int discount, List<Integer> insurance) {
-        CostInfoRequest costInfoRequest = new CostInfoRequest();
-        costInfoRequest.setDiscount(discount);
-        costInfoRequest.setDay_cost(day_cost);
-        if ( insurance != null ) costInfoRequest.setInsurance(insurance);
-        return costInfoRequest.build();
+    public static VehicleInfoCostDTO build(int day_cost, int discount, List<Integer> insurance) {
+        VehicleInfoCostDTO vehicleInfoCostDTO = new VehicleInfoCostDTO();
+        vehicleInfoCostDTO.setDiscount(discount);
+        vehicleInfoCostDTO.setDay_cost(day_cost);
+        if ( insurance != null ) vehicleInfoCostDTO.setInsurance(insurance);
+        return vehicleInfoCostDTO.build();
     }
 
 
-    public CostInfoRequest build() {
+    public VehicleInfoCostDTO build() {
         if ( day_cost != null ) {
             setDay_costs(buildList(day_cost));
         }

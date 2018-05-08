@@ -7,7 +7,7 @@ import org.buaa.ly.MyCar.config.TestLoader;
 import org.buaa.ly.MyCar.exception.advice.DefaultAdvice;
 import org.buaa.ly.MyCar.http.ResponseStatusMsg;
 import org.buaa.ly.MyCar.http.dto.VehicleInfoDTO;
-import org.buaa.ly.MyCar.http.request.CostInfoRequest;
+import org.buaa.ly.MyCar.http.dto.VehicleInfoCostDTO;
 import org.buaa.ly.MyCar.mock.MyMockPart;
 import org.buaa.ly.MyCar.utils.StatusEnum;
 import org.junit.Before;
@@ -79,9 +79,9 @@ public class VehicleInfoActionTest extends TestLoader {
         vehicleInfoDTO.setDescription("test-description");
         vehicleInfoDTO.setType("test-type");
 
-        CostInfoRequest costInfoRequest = CostInfoRequest.build(100,100, Lists.newArrayList(10,10,10));
+        VehicleInfoCostDTO vehicleInfoCostDTO = VehicleInfoCostDTO.build(100,100, Lists.newArrayList(10,10,10));
 
-        vehicleInfoDTO.setCost(costInfoRequest);
+        vehicleInfoDTO.setCost(vehicleInfoCostDTO);
 
         MockPart attachment = new MyMockPart("attachment", "test.jpg", "test".getBytes());
         MockMultipartFile vehicleInfoDTO1 = new MockMultipartFile("vehicleInfoDTO", "vehicleInfoDTO.json", MediaType.APPLICATION_PROBLEM_JSON_UTF8_VALUE,JSON.toJSONString(vehicleInfoDTO).getBytes());
@@ -119,7 +119,7 @@ public class VehicleInfoActionTest extends TestLoader {
         vehicleInfoDTO.setDescription("test-description");
         vehicleInfoDTO.setType("test-type");
 
-        //CostInfoRequest costInfoRequest = CostInfoRequest.build(100,100, Lists.newArrayList(10,10,10));
+        //VehicleInfoCostDTO costInfoRequest = VehicleInfoCostDTO.build(100,100, Lists.newArrayList(10,10,10));
 
         //vehicleInfoDTO.setCost(costInfoRequest);
 

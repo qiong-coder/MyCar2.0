@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import org.buaa.ly.MyCar.config.TestLoader;
 import org.buaa.ly.MyCar.exception.advice.DefaultAdvice;
 import org.buaa.ly.MyCar.http.ResponseStatusMsg;
-import org.buaa.ly.MyCar.http.request.CostInfoRequest;
+import org.buaa.ly.MyCar.http.dto.VehicleInfoCostDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,12 +65,12 @@ public class VehicleInfoCostActionTest extends TestLoader {
 
     @Test
     public void updateTest() throws Exception {
-        CostInfoRequest costInfoRequest = CostInfoRequest.build(1,2,Lists.newArrayList(1,2,3));
+        VehicleInfoCostDTO vehicleInfoCostDTO = VehicleInfoCostDTO.build(1,2,Lists.newArrayList(1,2,3));
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/vehicle/info/cost/{id}/", 1)
                 .header("token","test")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(JSON.toJSONString(costInfoRequest));
+                .content(JSON.toJSONString(vehicleInfoCostDTO));
 
         mockMvc.perform(request)
                 .andDo(print())

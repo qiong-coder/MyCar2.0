@@ -70,10 +70,12 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
     @Override
     public VehicleInfoDTO insert(VehicleInfoDTO vehicleInfoDTO, Part attachment) {
         if ( attachment != null && attachment.getSize() != 0 ) vehicleInfoDTO.setPicture(uploadService.save(attachment));
-        else vehicleInfoDTO.setPicture("test.jpg");
+        //else vehicleInfoDTO.setPicture("test.jpg");
 
         if ( vehicleInfoDTO.getCost() == null ) {
             vehicleInfoDTO.setCost(vehicleInfoCostLogic.defaultCost());
+        } else {
+            vehicleInfoDTO.getCost().build();
         }
 
         VehicleInfo vehicleInfo = vehicleInfoDTO.build();

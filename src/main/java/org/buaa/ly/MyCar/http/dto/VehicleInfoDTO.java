@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.buaa.ly.MyCar.entity.VehicleInfo;
-import org.buaa.ly.MyCar.internal.VehicleInfoCost;
 
 import java.util.Collection;
 import java.util.List;
@@ -38,7 +37,7 @@ public class VehicleInfoDTO extends DTOBase {
 
     String picture;
 
-    VehicleInfoCost cost;
+    VehicleInfoCostDTO cost;
 
     Integer status;
 

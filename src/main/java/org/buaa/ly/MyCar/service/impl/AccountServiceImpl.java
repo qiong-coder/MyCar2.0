@@ -69,7 +69,6 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
-
     @Override
     public void check(String token, RoleEnum role) {
 
@@ -137,9 +136,9 @@ public class AccountServiceImpl implements AccountService {
 
         redisService.deleteAccountDTO(token);
 
-        token = BasicAuthUtils.basicAuth(accountDTO.getUsername(), accountDTO.getPassword());
+        accountDTO.setToken(BasicAuthUtils.basicAuth(accountDTO.getUsername(), accountDTO.getPassword()));
 
-        redisService.deleteAccountDTO(token);
+        redisService.putAccountDTO(accountDTO);
 
         return accountDTO;
 

@@ -3,14 +3,13 @@ package org.buaa.ly.MyCar.action;
 
 import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.http.HttpResponse;
-import org.buaa.ly.MyCar.http.request.CostInfoRequest;
+import org.buaa.ly.MyCar.http.dto.VehicleInfoCostDTO;
 import org.buaa.ly.MyCar.service.AccountService;
 import org.buaa.ly.MyCar.service.VehicleInfoCostService;
 import org.buaa.ly.MyCar.utils.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 
 @RestController
@@ -42,9 +41,9 @@ public class VehicleInfoCostAction {
     @RequestMapping(value = "/{id}/", method = RequestMethod.PUT)
     public HttpResponse update(@RequestHeader String token,
                                @PathVariable int id,
-                               @RequestBody CostInfoRequest costInfoRequest){
+                               @RequestBody VehicleInfoCostDTO vehicleInfoCostDTO){
         accountService.check(token, RoleEnum.OPERATOR);
-        vehicleInfoCostService.update(id, costInfoRequest);
+        vehicleInfoCostService.update(id, vehicleInfoCostDTO);
         return new HttpResponse();
     }
 }

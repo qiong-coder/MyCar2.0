@@ -2,7 +2,7 @@ package org.buaa.ly.MyCar.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.exception.NotFoundError;
-import org.buaa.ly.MyCar.http.request.CostInfoRequest;
+import org.buaa.ly.MyCar.http.dto.VehicleInfoCostDTO;
 import org.buaa.ly.MyCar.http.response.CostInfoResponse;
 import org.buaa.ly.MyCar.http.response.CostInfoWithTimestamp;
 import org.buaa.ly.MyCar.internal.VehicleInfoCost;
@@ -44,7 +44,7 @@ public class VehicleInfoCostServiceImpl implements VehicleInfoCostService {
 
     @Modifying
     @Override
-    public VehicleInfoCost update(int id, CostInfoRequest costInfoRequest) {
-        return vehicleInfoCostLogic.update(id, costInfoRequest.build());
+    public VehicleInfoCost update(int id, VehicleInfoCostDTO vehicleInfoCostDTO) {
+        return vehicleInfoCostLogic.update(id, vehicleInfoCostDTO.build());
     }
 }

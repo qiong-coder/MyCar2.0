@@ -1,5 +1,6 @@
 package org.buaa.ly.MyCar.logic;
 
+import org.buaa.ly.MyCar.http.dto.VehicleInfoCostDTO;
 import org.buaa.ly.MyCar.internal.VehicleInfoCost;
 
 public interface VehicleInfoCostLogic  {
@@ -10,6 +11,6 @@ public interface VehicleInfoCostLogic  {
 
     VehicleInfoCost update(int id, VehicleInfoCost vehicleInfoCost);
 
-    VehicleInfoCost defaultCost();
+    VehicleInfoCostDTO defaultCost();
 
 }
