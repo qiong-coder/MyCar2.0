@@ -30,7 +30,7 @@ public class VehicleAction {
         return new HttpResponse(vehicleService.find(id));
     }
 
-    @RequestMapping(value = {"/vehicles"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/vehicle"}, method = RequestMethod.GET)
     public HttpResponse find(@RequestParam(required = false) Integer sid,
                              @RequestParam(required = false) Integer viid,
                              @RequestParam(required = false) List<Integer> status,

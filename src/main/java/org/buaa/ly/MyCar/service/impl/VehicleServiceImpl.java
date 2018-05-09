@@ -8,6 +8,7 @@ import org.buaa.ly.MyCar.entity.Vehicle;
 import org.buaa.ly.MyCar.exception.DuplicateError;
 import org.buaa.ly.MyCar.exception.NotFoundError;
 import org.buaa.ly.MyCar.http.dto.VehicleDTO;
+import org.buaa.ly.MyCar.http.dto.VehicleInfoDTO;
 import org.buaa.ly.MyCar.logic.OrderLogic;
 import org.buaa.ly.MyCar.logic.VehicleInfoLogic;
 import org.buaa.ly.MyCar.logic.VehicleLogic;
@@ -88,7 +89,14 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public VehicleDTO insert(VehicleDTO vehicleDTO) {
 
-        if ( vehicleLogic.find(vehicleDTO.getNumber()) != null ) throw new DuplicateError(String.format("vehicle with number:%s is duplicated", vehicleDTO.getNumber()));
+        Vehicle vehicle = vehicleLogic.find(vehicleDTO.getNumber());
+
+        if ( vehicle != null ) {
+            vehicleDTO.setId(vehicle.getId());
+            vehicleDTO.setStatus(StatusEnum.OK.getStatus());
+            if (vehicle.getStatus().compareTo(StatusEnum.DELETE.getStatus()) != 0 ) throw new DuplicateError("vehicle duplicate");
+            else return VehicleDTO.build(vehicleLogic.update(vehicleDTO.build()));
+        }
 
         if ( vehicleInfoLogic.find(vehicleDTO.getViid()) == null ) throw new NotFoundError(String.format("failure to find the vehicle info:%d",vehicleDTO.getViid()));
 
