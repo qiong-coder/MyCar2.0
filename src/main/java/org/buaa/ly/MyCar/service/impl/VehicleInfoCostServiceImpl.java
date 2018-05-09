@@ -29,10 +29,10 @@ public class VehicleInfoCostServiceImpl implements VehicleInfoCostService {
     }
 
     @Override
-    public CostInfoResponse find(int id) {
+    public VehicleInfoCostDTO find(int id) {
         VehicleInfoCost vehicleInfoCost = vehicleInfoCostLogic.find(id);
         if ( vehicleInfoCost == null ) throw new NotFoundError("failure to find vehicle info cost");
-        return new CostInfoResponse(vehicleInfoCost);
+        return new VehicleInfoCostDTO(vehicleInfoCost);
     }
 
     @Override
@@ -45,6 +45,6 @@ public class VehicleInfoCostServiceImpl implements VehicleInfoCostService {
     @Modifying
     @Override
     public VehicleInfoCost update(int id, VehicleInfoCostDTO vehicleInfoCostDTO) {
-        return vehicleInfoCostLogic.update(id, vehicleInfoCostDTO.build());
+        return vehicleInfoCostLogic.update(id, vehicleInfoCostDTO.build(false));
     }
 }

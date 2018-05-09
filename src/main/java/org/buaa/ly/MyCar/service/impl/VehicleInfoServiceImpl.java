@@ -75,7 +75,7 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
         if ( vehicleInfoDTO.getCost() == null ) {
             vehicleInfoDTO.setCost(vehicleInfoCostLogic.defaultCost());
         } else {
-            vehicleInfoDTO.getCost().build();
+            vehicleInfoDTO.getCost().build(false);
         }
 
         VehicleInfo vehicleInfo = vehicleInfoDTO.build();

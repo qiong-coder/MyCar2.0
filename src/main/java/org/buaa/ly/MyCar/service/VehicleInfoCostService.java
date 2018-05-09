@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 
 public interface VehicleInfoCostService {
 
-    CostInfoResponse find(int id);
+    VehicleInfoCostDTO find(int id);
 
     CostInfoWithTimestamp find(int id, Timestamp begin, Timestamp end);
 

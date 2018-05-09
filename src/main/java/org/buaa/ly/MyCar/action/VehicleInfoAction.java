@@ -30,14 +30,24 @@ public class VehicleInfoAction {
                              @PathVariable int id) {
         accountService.check(token, RoleEnum.OPERATOR);
 
-        return new HttpResponse(vehicleInfoService.find(id));
+        VehicleInfoDTO vehicleInfoDTO = vehicleInfoService.find(id);
+        vehicleInfoDTO.getCost().buildFinalDayCosts();
+
+        return new HttpResponse(vehicleInfoDTO);
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public HttpResponse find(@RequestHeader String token,
                              @RequestParam(required = false) List<Integer> status,
                              @RequestParam(required = false, defaultValue = "false") boolean exclude) {
-        return new HttpResponse(vehicleInfoService.find(status, exclude));
+
+        List<VehicleInfoDTO> vehicleInfoDTOS = vehicleInfoService.find(status, exclude);
+
+        for ( VehicleInfoDTO vehicleInfoDTO : vehicleInfoDTOS ) {
+            vehicleInfoDTO.getCost().buildFinalDayCosts();
+        }
+
+        return new HttpResponse(vehicleInfoDTOS);
     }
 
     // Timestamp参数格式为 yyyy-mm-dd HH:MM:SS 即可
@@ -46,8 +56,11 @@ public class VehicleInfoAction {
                              @PathVariable int sid,
                              @PathVariable Timestamp begin,
                              @PathVariable Timestamp end) {
-        //TODO: 完成时间排查车型返回
-        return new HttpResponse(vehicleInfoService.find(sid, begin, end));
+        List<VehicleInfoDTO> vehicleInfoDTOS = vehicleInfoService.find(sid, begin, end);
+        for ( VehicleInfoDTO vehicleInfoDTO : vehicleInfoDTOS ) {
+            vehicleInfoDTO.getCost().buildFinalDayCosts();
+        }
+        return new HttpResponse(vehicleInfoDTOS);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

@@ -34,7 +34,9 @@ public class VehicleInfoCostAction {
 
     @RequestMapping(value = "/{id}/", method = RequestMethod.GET)
     public HttpResponse find(@PathVariable int id) {
-        return new HttpResponse(vehicleInfoCostService.find(id));
+        VehicleInfoCostDTO vehicleInfoCostDTO = vehicleInfoCostService.find(id);
+        vehicleInfoCostDTO.buildFinalDayCosts();
+        return new HttpResponse(vehicleInfoCostDTO);
 
     }
 
