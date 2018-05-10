@@ -81,7 +81,7 @@ public class OrderLogicImpl implements OrderLogic {
 
         QOrder qOrder = QOrder.order;
 
-        BooleanExpression expression = null;
+        BooleanExpression expression;
 
         if ( sid != null ) {
             expression = qOrder.status.eq(StatusEnum.RENTING.getStatus()).and(qOrder.realReturnSid.eq(sid))

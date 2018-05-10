@@ -53,6 +53,10 @@ public class AlgorithmLogic {
 
         this.orders = orderLogic.find(sid, viid, begin, end);
 
+        this.stockVehicleMap = Maps.newHashMap();
+
+        this.needOrderMap = Maps.newHashMap();
+
         simulate();
     }
 
