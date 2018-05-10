@@ -1,13 +1,15 @@
 package org.buaa.ly.MyCar.http.dto;
 
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.buaa.ly.MyCar.entity.Order;
 import org.buaa.ly.MyCar.internal.CostItem;
 import org.buaa.ly.MyCar.internal.PreCost;
+import org.buaa.ly.MyCar.utils.OrderUtils;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -25,17 +27,23 @@ public class OrderDTO extends DTOBase {
 
     private Integer vid;
 
-    @JSONField(name = "begin")
+    //@JSONField(name = "begin") //, format = "yyyy-MM-dd HH:mm:ss")
+    @JsonProperty(value = "begin")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp beginTime;
 
-    @JSONField(name = "end")
+    //@JSONField(name = "end") //, format = "yyyy-MM-dd HH:mm:ss")
+    @JsonProperty(value = "end")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp endTime;
 
-    @JSONField(name = "rent_sid")
-    private Integer rentStore;
+    //@JSONField(name = "rent_sid")
+    @JsonProperty(value = "rent_sid")
+    private Integer rentSid;
 
-    @JSONField(name = "return_sid")
-    private Integer returnStore;
+    //@JSONField(name = "return_sid")
+    @JsonProperty(value = "return_sid")
+    private Integer returnSid;
 
     private String name;
 
@@ -47,36 +55,39 @@ public class OrderDTO extends DTOBase {
 
     private String bill;
 
-    @JSONField(name = "insurance")
+    //@JSONField(name = "insurance")
     private List<Integer> insurance;
 
-    @JSONField(name = "pre_cost")
+    @JsonProperty(value = "pre_cost")
     private PreCost preCost;
 
-    @JSONField(name = "pay_info")
+    @JsonProperty(value = "pay_info")
     private List<CostItem> payInfo;
 
-    @JSONField(name = "rbegin")
+    @JsonProperty(value = "rbegin") //, format = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp realBeginTime;
 
 
-    @JSONField(name = "rend")
+    @JsonProperty(value = "rend") //, format = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp realEndTime;
 
-    @JSONField(name = "rrent_sid")
-    private Integer realRentStore;
+    @JsonProperty(value = "rrent_sid")
+    private Integer realRentSid;
 
-    @JSONField(name = "rreturn_sid")
-    private Integer realReturnStore;
+    @JsonProperty(value = "rreturn_sid")
+    private Integer realReturnSid;
 
     private Integer distance;
 
-    @JSONField(name = "cost_info")
+    @JsonProperty(value = "cost_info")
     private List<CostItem> costInfo;
 
     private Integer status;
 
     public Order build() {
+        oid = OrderUtils.oid(returnSid, viid, identity);
         return build(this, Order.class);
     }
 

@@ -2,6 +2,9 @@ package org.buaa.ly.MyCar.http.dto;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.buaa.ly.MyCar.entity.Vehicle;
@@ -25,9 +28,15 @@ public class VehicleDTO extends DTOBase {
 
     Integer status;
 
-    Timestamp begin;
+    //@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @JsonProperty(value = "begin")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    Timestamp beginTime;
 
-    Timestamp end;
+    //@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @JsonProperty(value = "end")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    Timestamp endTime;
 
     Integer sid;
 

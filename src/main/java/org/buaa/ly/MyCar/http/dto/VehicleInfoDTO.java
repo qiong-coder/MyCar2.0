@@ -42,7 +42,6 @@ public class VehicleInfoDTO extends DTOBase {
 
     Integer status;
 
-    @JSONField(name = "vehicle_count")
     Long vehicleCount;
 
     public static VehicleInfoDTO build(VehicleInfo vehicleInfo) {

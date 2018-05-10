@@ -1,18 +1,18 @@
 package org.buaa.ly.MyCar.internal;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CostItem {
-
 
     String reason;
 
     int value;
 
     String operator;
-
 
 }

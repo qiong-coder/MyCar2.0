@@ -21,9 +21,8 @@ public class OrderRequest extends OrderDTO {
         BeanCopyUtils.copyPropertiesIgnoreNull(this, order);
 
         if ( vehicleInfo!=null ) order.setVehicleInfo(vehicleInfo);
-        order.setOid(OrderUtils.oid(order.getRentStore().getId(),
-                vehicleInfo.getId(),
-                Integer.parseInt(order.getIdentity().substring(order.getIdentity().length()-4))));
+
+        order.setOid(OrderUtils.oid(order.getRentStore().getId(), vehicleInfo.getId(), order.getIdentity()));
 
         return order;
     }

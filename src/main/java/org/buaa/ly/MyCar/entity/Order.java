@@ -47,11 +47,11 @@ public class Order implements Serializable {
     private Integer vid;
 
     @Column(name = "begin")
-    @JSONField(name = "begin")
+    //@JSONField(name = "begin") //, format = "yyyy-MM-dd HH:mm:ss")
     private Timestamp beginTime;
 
     @Column(name = "end")
-    @JSONField(name = "end")
+    //@JSONField(name = "end") //, format = "yyyy-MM-dd HH:mm:ss")
     private Timestamp endTime;
 
     @ManyToOne
@@ -89,23 +89,23 @@ public class Order implements Serializable {
     private String bill;
 
     @Column(name = "insurance")
-    @JSONField(name = "insurance", serializeUsing = String2ListIntegerSerializer.class, deserializeUsing = ListInteger2StringDeserializer.class)
+    @JSONField(serializeUsing = String2ListIntegerSerializer.class, deserializeUsing = ListInteger2StringDeserializer.class)
     private String insurance;
 
     @Column(name = "pre_cost")
-    @JSONField(name = "pre_cost", serializeUsing = PreCostSerializer.class, deserializeUsing = PreCostDeseriliazer.class)
+    @JSONField(serializeUsing = PreCostSerializer.class, deserializeUsing = PreCostDeseriliazer.class)
     private String preCost;
 
     @Column(name = "pay_info")
-    @JSONField(name = "pay_info", serializeUsing = CostItemSerializer.class, deserializeUsing = CostItemDeserializer.class)
+    @JSONField(serializeUsing = CostItemSerializer.class, deserializeUsing = CostItemDeserializer.class)
     private String payInfo;
 
     @Column(name = "rbegin")
-    @JSONField(name = "rbegin")
+    //@JSONField(name = "rbegin") //, format = "yyyy-MM-dd HH:mm:ss")
     private Timestamp realBeginTime;
 
     @Column(name = "rend")
-    @JSONField(name = "rend")
+    //@JSONField(name = "rend") //, format = "yyyy-MM-dd HH:mm:ss")
     private Timestamp realEndTime;
 
     @ManyToOne()
@@ -130,7 +130,7 @@ public class Order implements Serializable {
     private Integer distance;
 
     @Column(name = "cost_info")
-    @JSONField(name = "cost_info", serializeUsing = CostItemSerializer.class, deserializeUsing = CostItemDeserializer.class)
+    @JSONField(serializeUsing = CostItemSerializer.class, deserializeUsing = CostItemDeserializer.class)
     private String costInfo;
 
     @Column(name = "status")

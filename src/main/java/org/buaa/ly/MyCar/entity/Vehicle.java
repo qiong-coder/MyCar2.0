@@ -50,9 +50,11 @@ public class Vehicle implements Serializable {
     Integer status;
 
     @Column(name = "begin")
+    //@JSONField(name = "begin") //, format = "yyyy-MM-dd HH:mm:ss")
     Timestamp beginTime;
 
     @Column(name = "end")
+    //@JSONField(name = "end") //, format = "yyyy-MM-dd HH:mm:ss")
     Timestamp endTime;
 
     @ManyToOne(fetch = FetchType.LAZY)

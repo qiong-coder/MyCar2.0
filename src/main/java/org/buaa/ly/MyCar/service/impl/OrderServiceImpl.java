@@ -23,6 +23,7 @@ import org.buaa.ly.MyCar.logic.VehicleInfoLogic;
 import org.buaa.ly.MyCar.logic.VehicleLogic;
 import org.buaa.ly.MyCar.service.OrderService;
 import org.buaa.ly.MyCar.utils.BeanCopyUtils;
+import org.buaa.ly.MyCar.utils.OrderUtils;
 import org.buaa.ly.MyCar.utils.StatusEnum;
 import org.buaa.ly.MyCar.utils.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;

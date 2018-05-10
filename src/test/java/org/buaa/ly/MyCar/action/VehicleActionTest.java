@@ -47,7 +47,7 @@ public class VehicleActionTest extends TestLoader {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(1))
                 .andReturn();
 
-        request = MockMvcRequestBuilders.get("/vehicles")
+        request = MockMvcRequestBuilders.get("/vehicle")
                 .param("status", "0,10")
                 .header("token", "test");
         mockMvc.perform(request)
