@@ -49,7 +49,7 @@ public class Vehicle implements Serializable {
     @GeneratedValue
     Integer status;
 
-    @Column(name = "begin")
+    @Column(name = "begin", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
     //@JSONField(name = "begin") //, format = "yyyy-MM-dd HH:mm:ss")
     Timestamp beginTime;
 
@@ -65,4 +65,8 @@ public class Vehicle implements Serializable {
 
     @Column(name = "sid")
     Integer sid;
+
+    @Column(name = "create_time")
+    Timestamp createTime;
+
 }

@@ -2,11 +2,14 @@ package org.buaa.ly.MyCar.http.dto;
 
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.buaa.ly.MyCar.entity.VehicleInfo;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +44,10 @@ public class VehicleInfoDTO extends DTOBase {
     VehicleInfoCostDTO cost;
 
     Integer status;
+
+    @JsonProperty(value = "create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+    Timestamp createTime;
 
     Long vehicleCount;
 

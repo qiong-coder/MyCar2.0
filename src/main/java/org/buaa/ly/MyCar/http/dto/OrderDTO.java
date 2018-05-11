@@ -29,12 +29,12 @@ public class OrderDTO extends DTOBase {
 
     //@JSONField(name = "begin") //, format = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty(value = "begin")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Timestamp beginTime;
 
     //@JSONField(name = "end") //, format = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty(value = "end")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Timestamp endTime;
 
     //@JSONField(name = "rent_sid")
@@ -65,12 +65,12 @@ public class OrderDTO extends DTOBase {
     private List<CostItem> payInfo;
 
     @JsonProperty(value = "rbegin") //, format = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Timestamp realBeginTime;
 
 
     @JsonProperty(value = "rend") //, format = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Timestamp realEndTime;
 
     @JsonProperty(value = "rrent_sid")
@@ -85,6 +85,10 @@ public class OrderDTO extends DTOBase {
     private List<CostItem> costInfo;
 
     private Integer status;
+
+    @JsonProperty(value = "create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+    private Timestamp createTime;
 
     public Order build() {
         oid = OrderUtils.oid(returnSid, viid, identity);

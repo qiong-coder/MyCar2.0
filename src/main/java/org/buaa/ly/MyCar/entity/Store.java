@@ -11,6 +11,7 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.List;
 
 
@@ -37,6 +38,9 @@ public class Store implements Serializable {
 
     @Column(name = "status")
     Integer status;
+
+    @Column(name = "create_time")
+    Timestamp createTime;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "store")
     @JSONField(deserialize = false, serialize = false)

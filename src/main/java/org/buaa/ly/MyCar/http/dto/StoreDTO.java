@@ -1,11 +1,14 @@
 package org.buaa.ly.MyCar.http.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.buaa.ly.MyCar.entity.Store;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -22,6 +25,10 @@ public class StoreDTO extends DTOBase {
     String phone;
 
     Integer status;
+
+    @JsonProperty(value = "create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+    Timestamp createTime;
 
     public Store build() {
         return build(this, Store.class);

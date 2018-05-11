@@ -59,14 +59,12 @@ public class OrderLogicImpl implements OrderLogic {
     }
 
     @Override
-    public void find(Integer sid, Integer viid, Integer status, List<Order> orderDTOS,
+    public void find(Integer sid, Integer viid, Integer status, List<Order> orders,
                      Map<Integer, Vehicle> vehicleMap,
                      Map<Integer, VehicleInfo> vehicleInfoMap) {
-        List<Order> orders = find(sid, viid, status);
+        orders.addAll(find(sid, viid, status));
 
         for ( Order order : orders ) {
-            orders.add(order);
-
             Vehicle vehicle = order.getVehicle();
             if ( vehicle != null ) vehicleMap.put(vehicle.getId(), vehicle);
 

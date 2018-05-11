@@ -30,15 +30,19 @@ public class VehicleDTO extends DTOBase {
 
     //@JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty(value = "begin")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     Timestamp beginTime;
 
     //@JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty(value = "end")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     Timestamp endTime;
 
     Integer sid;
+
+    @JsonProperty(value = "create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+    Timestamp createTime;
 
     public static VehicleDTO build(Vehicle vehicle) {
         return build(vehicle, VehicleDTO.class);

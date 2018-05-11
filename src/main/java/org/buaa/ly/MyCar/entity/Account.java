@@ -13,6 +13,7 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @Data
 @Entity
@@ -52,4 +53,6 @@ public class Account implements Serializable {
     @Column(name = "status")
     private Integer status;
 
+    @Column(name = "create_time")
+    private Timestamp createTime;
 }

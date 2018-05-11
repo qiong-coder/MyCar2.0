@@ -35,7 +35,6 @@ public class JpaConfig {
         basicDataSource.setUrl(url);
         basicDataSource.setUsername(username);
         basicDataSource.setPassword(password);
-
         return basicDataSource;
     }
 

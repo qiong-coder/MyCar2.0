@@ -39,7 +39,8 @@ public class OrderAction {
     public HttpResponse insert(HttpServletRequest request,
                                @PathVariable int viid,
                                @RequestBody OrderDTO orderDTO) {
-        if ( orderService.insert(viid, orderDTO) != null ) return new HttpResponse();
+        orderDTO = orderService.insert(viid, orderDTO);
+        if ( orderDTO != null ) return new HttpResponse(orderDTO);
         else return HttpResponse.buildErrorResponse();
     }
 
@@ -47,7 +48,8 @@ public class OrderAction {
     public HttpResponse update(HttpServletRequest request,
                                @PathVariable int id,
                                @RequestBody OrderDTO orderDTO) {
-        if ( orderService.update(id, orderDTO) != null ) return new HttpResponse();
+        orderDTO = orderService.update(id, orderDTO);
+        if ( orderDTO != null ) return new HttpResponse(orderDTO);
         else return HttpResponse.buildErrorResponse();
     }
 
@@ -104,14 +106,12 @@ public class OrderAction {
 
     @RequestMapping(value = "/order/history/{viid}/{number}/{begin}/{end}/", method = RequestMethod.GET)
     public HttpResponse history(HttpServletRequest request,
-                                @PathVariable String viid,
+                                @PathVariable int viid,
                                 @PathVariable String number,
                                 @PathVariable Timestamp begin,
                                 @PathVariable Timestamp end)
     {
-        return new HttpResponse(orderService.history(viid.compareTo("null")==0?null:Integer.parseInt(viid),
-                number.compareTo("null")==0?null:number,
-                begin, end));
+        return new HttpResponse(orderService.history(viid, number, begin, end));
     }
 
     @RequestMapping(value = "/order/history/viid/{number}/{begin}/{end}/", method = RequestMethod.GET)
@@ -120,9 +120,7 @@ public class OrderAction {
                                 @PathVariable Timestamp begin,
                                 @PathVariable Timestamp end)
     {
-        return new HttpResponse(orderService.history(null,
-                number.compareTo("null")==0?null:number,
-                begin, end));
+        return new HttpResponse(orderService.history(null, number, begin, end));
     }
 
     @RequestMapping(value = "/order/history/viid/number/{begin}/{end}/", method = RequestMethod.GET)

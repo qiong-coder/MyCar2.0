@@ -136,4 +136,6 @@ public class Order implements Serializable {
     @Column(name = "status")
     private Integer status;
 
+    @Column(name = "create_time")
+    private Timestamp createTime;
 }
