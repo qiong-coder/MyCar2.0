@@ -134,7 +134,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderDTO.setViid(viid);
         orderDTO.setPreCost(PreCost.build(vehicleInfoDTO.getCost(), orderDTO.getBeginTime(), orderDTO.getEndTime(), orderDTO.getInsurance()));
-
+        orderDTO.setOid(OrderUtils.oid(orderDTO.getRentSid(),viid,orderDTO.getIdentity()));
         return OrderDTO.build(orderLogic.insert(orderDTO.build()));
     }
 

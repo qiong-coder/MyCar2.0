@@ -49,7 +49,7 @@ public class VehicleInfoDTO extends DTOBase {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     Timestamp createTime;
 
-    Long vehicleCount;
+    Integer vehicleCount;
 
     public static VehicleInfoDTO build(VehicleInfo vehicleInfo) {
         return build(vehicleInfo, VehicleInfoDTO.class);

@@ -91,7 +91,6 @@ public class OrderDTO extends DTOBase {
     private Timestamp createTime;
 
     public Order build() {
-        oid = OrderUtils.oid(returnSid, viid, identity);
         return build(this, Order.class);
     }
 
