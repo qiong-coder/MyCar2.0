@@ -22,11 +22,11 @@ public interface OrderLogic {
               Map<Integer, Vehicle> vehicleMap,
               Map<Integer, VehicleInfo> vehicleInfoMap);
 
-    List<Order> find(Integer sid, Integer viid, Timestamp begin, Timestamp end);
+    List<Order> findHistoryOrders(Integer viid, Integer vid, Timestamp begin, Timestamp end);
 
-    List<Order> findHistoryOrders(Integer viid, Integer vid, Timestamp begin, Timestamp end, List<Integer> status);
+    List<Order> findRentingOrders(Integer sid, Integer viid, Timestamp begin, Timestamp end);
 
-    List<Order> findScheduleOrders(Integer viid, Integer sid, Timestamp begin, Timestamp end);
+    List<Order> findPendingOrders(Integer sid, Integer viid, Timestamp begin, Timestamp end);
 
     void countByStatus(Integer status,
                        Map<Integer, Integer> viidStatusCount);

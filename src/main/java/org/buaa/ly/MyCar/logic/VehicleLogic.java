@@ -13,7 +13,7 @@ public interface VehicleLogic {
 
     Vehicle find(String number);
 
-    long count(Integer sid, Integer viid, Collection<Integer> status, boolean exclude);
+    int count(Integer sid, Integer viid, Collection<Integer> status, boolean exclude);
 
     List<Vehicle> find(Integer sid, Integer viid, Collection<Integer> status, boolean exclude);
 

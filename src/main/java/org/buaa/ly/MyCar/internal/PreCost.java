@@ -37,16 +37,19 @@ public class PreCost {
 
         int day_insurance = 0;
 
-        if ( insurance != null ) for ( Integer value : insurance ) day_insurance += value;
+        if ( insurance != null ) {
+            for ( int i = 0; i < insurance.size(); ++ i )
+                if ( insurance.get(i) > 0 ) day_insurance += vehicleInfoCost.getInsurance().get(i);
+        }
 
-        while (eHour - bHour >= 6) {
+        do {
             int day_cost = vehicleInfoCost.day_cost(bCalendar);
             int discount = vehicleInfoCost.discount(bCalendar);
             day_costs.add(new CostItem(TimeUtils.getDateFormat(bCalendar.getTime()),day_cost,null));
             discounts.add(new CostItem(TimeUtils.getDateFormat(bCalendar.getTime()),discount,null));
             total_cost += day_cost * discount / 100 + day_insurance;
             bCalendar.add(Calendar.DATE, 1);
-        }
+        } while (eHour - bHour >= 6);
 
         if (eHour - bHour >= 5) {
             total_cost += 40000;

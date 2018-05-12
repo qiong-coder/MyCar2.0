@@ -74,7 +74,6 @@ public class OrderLogicImpl implements OrderLogic {
 
     }
 
-    @Override
     public List<Order> find(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
 
         QOrder qOrder = QOrder.order;
@@ -95,53 +94,72 @@ public class OrderLogicImpl implements OrderLogic {
     }
 
     @Override
-    public List<Order> findHistoryOrders(Integer viid, Integer vid, Timestamp begin, Timestamp end, List<Integer> status) {
+    public List<Order> findHistoryOrders(Integer viid, Integer vid, Timestamp begin, Timestamp end) {
 
-        QOrder order = QOrder.order;
+        QOrder qOrder = QOrder.order;
 
-        BooleanExpression booleanExpression  = null;
+        BooleanExpression expression  = null;
 
-        if ( viid != null ) booleanExpression = order.vehicleInfo.id.eq(viid);
-        else if ( vid != null ) booleanExpression = order.vehicle.id.eq(vid);
+        if ( viid != null ) expression = qOrder.viid.eq(viid);
+        else if ( vid != null ) expression = qOrder.vid.eq(vid);
 
         if ( begin != null && end != null ) {
-            BooleanExpression expression = order.realBeginTime.lt(end).and(order.realEndTime.gt(begin));
-            if ( booleanExpression != null ) booleanExpression.and(expression);
-            else booleanExpression = expression;
+            expression = expression == null ? qOrder.realBeginTime.lt(end).and(qOrder.realEndTime.gt(begin)) : expression.and(qOrder.realBeginTime.lt(end).and(qOrder.realEndTime.gt(begin)));
         }
-        if ( status != null ) {
-            BooleanExpression expression = order.status.in(status);
-            if ( booleanExpression != null ) booleanExpression.and(expression);
-            else booleanExpression = expression;
-        }
-        if ( booleanExpression != null )
-            return Lists.newArrayList(orderRepository.findAll(booleanExpression));
-        else return Lists.newArrayList(orderRepository.findAll());
 
+        expression = expression == null ? qOrder.status.in(Lists.newArrayList(StatusEnum.DRAWBACK.getStatus(),StatusEnum.FINISHED.getStatus())) :
+                expression.and(qOrder.status.in(Lists.newArrayList(StatusEnum.DRAWBACK.getStatus(),StatusEnum.FINISHED.getStatus())));
+
+
+        return Lists.newArrayList(orderRepository.findAll(expression));
     }
 
     @Override
-    public List<Order> findScheduleOrders(Integer viid, Integer sid, Timestamp begin, Timestamp end) {
+    public List<Order> findRentingOrders(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
+        QOrder qOrder = QOrder.order;
 
-        QOrder order = QOrder.order;
+        BooleanExpression expression = null;
 
-        BooleanExpression booleanExpression = null;
-
-        if ( viid != null ) booleanExpression = order.vehicleInfo.id.eq(viid);
+        if ( viid != null ) expression = qOrder.viid.eq(viid);
 
         if ( sid != null ) {
-            if ( booleanExpression != null ) booleanExpression.and(order.rentStore.id.eq(sid));
-            booleanExpression = order.rentStore.id.eq(sid);
+            expression = (expression == null ? qOrder.realReturnSid.eq(sid) : expression.and(qOrder.realReturnSid.eq(sid)));
         }
 
-        BooleanExpression pendingStatus = order.beginTime.lt(end).and(order.endTime.gt(begin)).and(order.status.eq(StatusEnum.PENDING.getStatus()));
-        BooleanExpression rentingStatus = order.realBeginTime.lt(end).and(order.realEndTime.gt(begin)).and(order.status.eq(StatusEnum.RENTING.getStatus()));
+        if ( begin != null ) {
+            if (end != null) {
+                expression = (expression == null ? qOrder.realEndTime.lt(begin) : expression.and(qOrder.realEndTime.lt(begin)));
+            } else {
+                expression = expression == null ? qOrder.realBeginTime.lt(end).and(qOrder.realEndTime.gt(begin)) : expression.and(qOrder.realBeginTime.lt(end).and(qOrder.realEndTime.gt(begin)));
+            }
+        }
 
-        if ( booleanExpression != null )
-            booleanExpression.and(pendingStatus.or(rentingStatus));
-        else booleanExpression = pendingStatus.or(rentingStatus);
+        if ( expression != null )
+            return Lists.newArrayList(orderRepository.findAll(expression));
+        else return Lists.newArrayList(orderRepository.findAll());
+    }
 
-        return Lists.newArrayList(orderRepository.findAll(booleanExpression));
+    @Override
+    public List<Order> findPendingOrders(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
+
+        QOrder qOrder = QOrder.order;
+
+        BooleanExpression expression = null;
+
+        if ( viid != null ) expression = qOrder.viid.eq(viid);
+
+        if ( sid != null ) {
+            expression = (expression == null ? qOrder.realReturnSid.eq(sid).or(qOrder.realReturnSid.eq(sid)) : expression.and(qOrder.realReturnSid.eq(sid).or(qOrder.realReturnSid.eq(sid))));
+
+        }
+
+        if ( begin != null && end != null ) {
+            expression = expression == null ? qOrder.beginTime.lt(end).and(qOrder.endTime.gt(begin)).and(qOrder.status.eq(StatusEnum.PENDING.getStatus())) : expression.and(qOrder.beginTime.lt(end).and(qOrder.endTime.gt(begin)).and(qOrder.status.eq(StatusEnum.PENDING.getStatus())));
+        }
+
+        if ( expression != null )
+            return Lists.newArrayList(orderRepository.findAll(expression));
+        else return Lists.newArrayList(orderRepository.findAll());
 
     }
 

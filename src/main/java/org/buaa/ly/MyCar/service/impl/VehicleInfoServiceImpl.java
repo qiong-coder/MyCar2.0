@@ -105,7 +105,8 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
     public List<VehicleInfoDTO> find(List<Integer> status, boolean exclude) {
         List<VehicleInfoDTO> vehicleInfoDTOS = VehicleInfoDTO.build(vehicleInfoLogic.find(status, exclude));
         for ( VehicleInfoDTO vehicleInfoDTO : vehicleInfoDTOS ) {
-            vehicleInfoDTO.setVehicleCount(vehicleLogic.count(null,vehicleInfoDTO.getId(),status,exclude));
+            vehicleInfoDTO.setVehicleCount(vehicleLogic.count(null,vehicleInfoDTO.getId(),
+                    Lists.newArrayList(StatusEnum.OK.getStatus()),false));
         }
         return vehicleInfoDTOS;
     }
@@ -126,10 +127,10 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
 
             for ( Map.Entry<Integer, List<Vehicle>> viidEntry : sidEntry.getValue().entrySet() ) {
 
-                int vehicleInfoId = viidEntry.getKey();
+                VehicleInfo vehicleInfo = vehicleInfoLogic.find(viidEntry.getKey());
 
-                if ( !neededStoreMap.containsKey(storeId) || !neededStoreMap.get(storeId).containsKey(vehicleInfoId) ||
-                        (neededStoreMap.get(storeId).get(vehicleInfoId).size() < sidEntry.getValue().size()) )
+                if ( !neededStoreMap.containsKey(storeId) || !neededStoreMap.get(storeId).containsKey(viidEntry.getKey()) ||
+                        (neededStoreMap.get(storeId).get(viidEntry.getKey()).size() < sidEntry.getValue().size() + vehicleInfo.getSpare()) )
                     vehicleInfos.add(viidEntry.getValue().get(0).getVehicleInfo());
             }
 

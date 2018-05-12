@@ -26,7 +26,9 @@ public class AlgorithmLogic {
 
     private List<Vehicle> vehicles;
 
-    private List<Order> orders;
+    private List<Order> rentingOrders;
+
+    private List<Order> pendingOrders;
 
     Integer sid;
 
@@ -51,20 +53,15 @@ public class AlgorithmLogic {
 
         this.vehicles = vehicleLogic.find(sid, viid, Lists.newArrayList(StatusEnum.DELETE.getStatus()), true);
 
-        this.orders = orderLogic.find(sid, viid, begin, end);
+        this.rentingOrders = orderLogic.findRentingOrders(sid, viid, begin, null);
+
+        this.pendingOrders = orderLogic.findPendingOrders(sid, viid, begin, end);
 
         this.stockVehicleMap = Maps.newHashMap();
 
         this.needOrderMap = Maps.newHashMap();
 
         simulate();
-    }
-
-
-    private Vehicle getVehicle(int id, List<Vehicle> vehicles) {
-        for ( Vehicle  vehicle : vehicles )
-            if (vehicle.getId() == id) return vehicle;
-        return null;
     }
 
     private <T> void put(int sid, int viid, T object, Map<Integer, Map<Integer, List<T>>> maps) {
@@ -85,18 +82,16 @@ public class AlgorithmLogic {
             }
         }
 
-        for ( Order order : orders ) {
+        for ( Order order : rentingOrders ) {
+
+            int sid = order.getReturnSid();
+
+            put(sid, order.getVid(), order.getVehicle(), stockVehicleMap);
+
+        }
+
+        for ( Order order : pendingOrders ) {
             int status = order.getStatus();
-
-            if ( status == StatusEnum.RENTING.getStatus() && (order.getRealEndTime().compareTo(begin) < 0 || order.getRealBeginTime().compareTo(end) > 0 ) ) {
-                int oViid = order.getViid();
-                int oVid = order.getVid();
-
-                Vehicle vehicle = getVehicle(oVid, vehicles);
-
-                if ( vehicle != null ) put(order.getRealReturnSid(), oViid, vehicle, stockVehicleMap);
-
-            }
 
             if ( status == StatusEnum.PENDING.getStatus() && (order.getBeginTime().compareTo(end) < 0 && order.getEndTime().compareTo(begin) > 0) ) {
                 put(order.getRentSid(), order.getViid(), order, needOrderMap);

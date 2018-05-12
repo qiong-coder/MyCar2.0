@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.sun.org.apache.xml.internal.security.algorithms.JCEMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.entity.Order;
 import org.buaa.ly.MyCar.entity.Vehicle;
@@ -21,6 +22,7 @@ import org.buaa.ly.MyCar.logic.OrderLogic;
 import org.buaa.ly.MyCar.logic.PayLogic;
 import org.buaa.ly.MyCar.logic.VehicleInfoLogic;
 import org.buaa.ly.MyCar.logic.VehicleLogic;
+import org.buaa.ly.MyCar.logic.impl.AlgorithmLogic;
 import org.buaa.ly.MyCar.service.OrderService;
 import org.buaa.ly.MyCar.utils.BeanCopyUtils;
 import org.buaa.ly.MyCar.utils.OrderUtils;
@@ -269,8 +271,7 @@ public class OrderServiceImpl implements OrderService {
             else vid = vehicle.getId();
         }
 
-        List<Order> orders = orderLogic.findHistoryOrders(viid, vid, begin, end,
-                Lists.newArrayList(StatusEnum.DRAWBACK.getStatus(), StatusEnum.FINISHED.getStatus()));
+        List<Order> orders = orderLogic.findHistoryOrders(viid, vid, begin, end);
 
         int ret_day_total = 0;
 
@@ -311,81 +312,52 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderSchedule schedule(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
 
-        List<Order> orders = orderLogic.findScheduleOrders(viid, sid, begin, end);
+        AlgorithmLogic algorithmLogic = new AlgorithmLogic(sid, viid, begin, end, vehicleLogic, orderLogic);
 
-        Map<Integer, VehicleInfo> vehicleInfoMap = Maps.newHashMap(); //vehicleInfoLogic.findVehicleInfoMap(viid);
-        Map<Integer, Map<Integer, Integer>> storeVehicleInfoCountMap = Maps.newHashMap();// = vehicleLogic.countByStoreAndVehicleInfoAndStatusNot(viid, sid, StatusEnum.DELETE.getStatus());
-        Map<Integer, Map<Integer, int[]>> storeVehicleInfoUseMap = Maps.newHashMap();
+        Map<Integer, Map<Integer, List<Vehicle>>> stockVehicleMap = algorithmLogic.getStockVehicleMap();
+        Map<Integer, Map<Integer, List<Order>>> needOrderMap = algorithmLogic.getNeedOrderMap();
+
         int days = TimeUtils.days(begin, end) + 1;
-
-        for ( Order order : orders ) {
-            VehicleInfo vehicleInfo = order.getVehicleInfo();
-            int v = vehicleInfo.getId();
-
-            if ( !vehicleInfoMap.containsKey(v) ) continue;
-
-            int s;
-            Timestamp vBegin, vEnd;
-
-            if ( order.getStatus() == StatusEnum.PENDING.getStatus() ) {
-                s = order.getRentStore().getId();
-                vBegin = order.getBeginTime();
-                vEnd = order.getEndTime();
-            } else if ( order.getStatus() == StatusEnum.RENTING.getStatus() ) {
-                s = order.getRealRentStore().getId();
-                vBegin = order.getRealBeginTime();
-                vEnd = order.getRealEndTime();
-            } else continue;
-
-            if ( !storeVehicleInfoCountMap.containsKey(s) ) continue;
-
-            vBegin = vBegin.compareTo(begin) > 0 ? vBegin : begin;
-            vEnd = vEnd.compareTo(end) > 0 ? vEnd : end;
-
-            if ( !storeVehicleInfoUseMap.containsKey(s) ) {
-                storeVehicleInfoUseMap.put(s, Maps.<Integer, int[]>newHashMap());
-            }
-
-            Map<Integer, int[]> vehicleInfoUseMap = storeVehicleInfoUseMap.get(s);
-
-            if ( !vehicleInfoUseMap.containsKey(v) ) vehicleInfoUseMap.put(v, new int[days]);
-
-            int[] use = vehicleInfoUseMap.get(v);
-
-            int begin_index = TimeUtils.days(vBegin, begin);
-            int end_index = TimeUtils.days(vEnd, begin);
-
-            for ( int i = begin_index; i < end_index; ++ i ) {
-                use[i] += 1;
-            }
-        }
 
         Map<Integer, Map<String, List<ScheduleItem>>> orderSchedules = Maps.newHashMap();
 
-        for ( Map.Entry<Integer, Map<Integer, int[]>> storeEntry : storeVehicleInfoUseMap.entrySet() ) {
+        for ( Map.Entry<Integer, Map<Integer, List<Vehicle>>> storeEntry : stockVehicleMap.entrySet() ) {
 
             int store = storeEntry.getKey();
-            Map<Integer, int[]> vehicleInfoUseMap = storeEntry.getValue();
+            Map<Integer, List<Vehicle>> stockVehicleInfoMap = storeEntry.getValue();
 
-            Map<Integer, Integer> vehicleInfoCountMap = storeVehicleInfoCountMap.get(store);
+            Map<Integer, List<Order>> needVehicleInfo = needOrderMap.get(store);
 
-            for ( Map.Entry<Integer, int[]> vEntry : vehicleInfoUseMap.entrySet() ) {
+            for ( Map.Entry<Integer, List<Vehicle>> vEntry : stockVehicleInfoMap.entrySet() ) {
 
                 int v = vEntry.getKey();
-                String vehicleInfoName = vehicleInfoMap.get(v).getName();
-                int[] use = vEntry.getValue();
+                String vehicleInfoName = vEntry.getValue().get(0).getVehicleInfo().getName();
+
+                int[] use = new int[days];
+                for( int i = 0; i < days; ++ i ) use[i] = 0;
+
+                if ( needVehicleInfo.containsKey(v) ) {
+                    for( Order order : needVehicleInfo.get(v) ) {
+                        int bIndex = TimeUtils.days(begin, order.getBeginTime());
+                        int eIndex = TimeUtils.days(begin, order.getEndTime());
+                        for ( int i = Math.max(bIndex,0); i < Math.min(eIndex,days); ++ i) {
+                            ++use[i];
+                        }
+                    }
+                }
+
 
                 if ( !orderSchedules.containsKey(store) ) {
                     orderSchedules.put(store, Maps.<String, List<ScheduleItem>>newHashMap());
                 }
 
-                if ( !orderSchedules.get(store).containsKey(vehicleInfoMap.get(v).getName()) ) {
-                    orderSchedules.get(store).put(vehicleInfoMap.get(v).getName(), Lists.<ScheduleItem>newArrayList());
+                if ( !orderSchedules.get(store).containsKey(vehicleInfoName) ) {
+                    orderSchedules.get(store).put(vehicleInfoName, Lists.<ScheduleItem>newArrayList());
                 }
 
                 List<ScheduleItem> scheduleItems = orderSchedules.get(store).get(vehicleInfoName);
 
-                int count = vehicleInfoCountMap.get(v);
+                int count = vEntry.getValue().size();
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(begin);
                 ScheduleItem item = ScheduleItem.builder().begin(new Timestamp(calendar.getTimeInMillis()))
@@ -423,9 +395,33 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderConflict conflict(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
-        //Map<Integer, Map<Integer, Integer>> storeVehicleInfoCountMap = vehicleLogic.countByStoreAndVehicleInfoAndStatusNot(viid, sid, StatusEnum.DELETE.getStatus());
 
+        List<Order> rentingOrders = orderLogic.findRentingOrders(sid, viid, begin, end);
 
-        return null;
+        List<Order> pendingOrders = orderLogic.findPendingOrders(sid, viid, begin, end);
+
+        List<Vehicle> vehicles = vehicleLogic.find(sid, viid, Lists.newArrayList(StatusEnum.OK.getStatus(), StatusEnum.SPARE.getStatus()), false);
+
+        int spare = 0;
+        Map<Integer, Integer> spareMap = Maps.newHashMap();
+
+        for ( Vehicle vehicle : vehicles ) {
+            if ( !spareMap.containsKey(vehicle.getViid()) ) spareMap.put(vehicle.getViid(), vehicle.getVehicleInfo().getSpare());
+            if (vehicle.getStatus().compareTo(StatusEnum.SPARE.getStatus())  == 0 )
+                ++ spare;
+        }
+        int total = vehicles.size();
+        for (  Map.Entry<Integer, Integer> entry : spareMap.entrySet() ) {
+            spare += entry.getValue();
+            total -= entry.getValue();
+        }
+
+        return OrderConflict.builder()
+                .orders(OrderDTO.build(pendingOrders))
+                .used(rentingOrders.size())
+                .to_used(pendingOrders.size())
+                .sparse(spare)
+                .total(vehicles.size())
+                .build();
     }
 }

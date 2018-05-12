@@ -16,5 +16,4 @@ public interface VehicleRepository extends PagingAndSortingRepository<Vehicle, I
     Vehicle findByNumber(String number);
 
     Vehicle deleteById(int id);
-
 }

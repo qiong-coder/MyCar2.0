@@ -55,7 +55,7 @@ public class VehicleLogicImpl implements VehicleLogic {
     }
 
     @Override
-    public long count(Integer sid, Integer viid, Collection<Integer> status, boolean exclude) {
+    public int count(Integer sid, Integer viid, Collection<Integer> status, boolean exclude) {
         QVehicle qVehicle = QVehicle.vehicle;
 
         BooleanExpression expression = null;
@@ -71,8 +71,9 @@ public class VehicleLogicImpl implements VehicleLogic {
                 expression = expression == null ? qVehicle.status.in(status) : expression.and(qVehicle.status.in(status).not());
             }
         }
-        if ( expression != null ) return vehicleRepository.count(expression);
-        return vehicleRepository.count();
+
+        if ( expression != null ) return (int)vehicleRepository.count(expression);
+        return (int)vehicleRepository.count();
 
     }
 
@@ -83,12 +84,12 @@ public class VehicleLogicImpl implements VehicleLogic {
 
         BooleanExpression expression = null;
 
-        if ( viid != null ) {
-            expression = qVehicle.viid.eq(sid);
+        if ( sid != null ) {
+            expression = qVehicle.sid.eq(sid);
         }
 
-        if ( sid != null ) {
-            expression = expression == null ? qVehicle.sid.eq(sid) : expression.and(qVehicle.sid.eq(sid));
+        if ( viid != null ) {
+            expression = expression == null ? qVehicle.viid.eq(viid) : expression.and(qVehicle.viid.eq(viid));
         }
 
         if ( status != null ) {
