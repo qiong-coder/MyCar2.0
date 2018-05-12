@@ -104,83 +104,33 @@ public class OrderAction {
         else return HttpResponse.buildErrorResponse();
     }
 
-    @RequestMapping(value = "/order/history/{viid}/{number}/{begin}/{end}/", method = RequestMethod.GET)
+    @RequestMapping(value = "/order/history", method = RequestMethod.GET)
     public HttpResponse history(HttpServletRequest request,
-                                @PathVariable int viid,
-                                @PathVariable String number,
-                                @PathVariable Timestamp begin,
-                                @PathVariable Timestamp end)
+                                @RequestParam(required = false) Integer viid,
+                                @RequestParam(required = false) String number,
+                                @RequestParam Timestamp begin,
+                                @RequestParam Timestamp end)
     {
         return new HttpResponse(orderService.history(viid, number, begin, end));
     }
 
-    @RequestMapping(value = "/order/history/viid/{number}/{begin}/{end}/", method = RequestMethod.GET)
-    public HttpResponse history(HttpServletRequest request,
-                                @PathVariable String number,
-                                @PathVariable Timestamp begin,
-                                @PathVariable Timestamp end)
-    {
-        return new HttpResponse(orderService.history(null, number, begin, end));
-    }
-
-    @RequestMapping(value = "/order/history/viid/number/{begin}/{end}/", method = RequestMethod.GET)
-    public HttpResponse history(HttpServletRequest request,
-                                @PathVariable Timestamp begin,
-                                @PathVariable Timestamp end)
-    {
-        return new HttpResponse(orderService.history(null, null,
-                begin, end));
-    }
-
-    @RequestMapping(value = "/order/schedule/{sid}/{viid}/{begin}/{end}/", method = RequestMethod.GET)
+    @RequestMapping(value = "/order/schedule", method = RequestMethod.GET)
     public HttpResponse schedule(HttpServletRequest request,
-                                 @PathVariable Integer sid,
-                                 @PathVariable Integer viid,
-                                 @PathVariable Timestamp begin,
-                                 @PathVariable Timestamp end)
+                                 @RequestParam(required = false) Integer sid,
+                                 @RequestParam(required = false) Integer viid,
+                                 @RequestParam Timestamp begin,
+                                 @RequestParam Timestamp end)
     {
         return new HttpResponse(orderService.schedule(sid, viid, begin, end));
     }
 
-    @RequestMapping(value = "/order/schedule/sid/{viid}/{begin}/{end}/", method = RequestMethod.GET)
-    public HttpResponse schedule(HttpServletRequest request,
-                                 @PathVariable Integer viid,
-                                 @PathVariable Timestamp begin,
-                                 @PathVariable Timestamp end)
-    {
-        return new HttpResponse(orderService.schedule(null,viid, begin, end));
-    }
-
-    @RequestMapping(value = "/order/schedule/sid/viid/{begin}/{end}/", method = RequestMethod.GET)
-    public HttpResponse schedule(HttpServletRequest request,
-                                 @PathVariable Timestamp begin,
-                                 @PathVariable Timestamp end)
-    {
-        return new HttpResponse(orderService.schedule(null,null, begin, end));
-    }
-
-
-    @RequestMapping(value = "/order/conflict/{sid}/{viid}/{begin}/{end}/", method = RequestMethod.GET)
+    @RequestMapping(value = "/order/conflict", method = RequestMethod.GET)
     public HttpResponse conflict(HttpServletRequest request,
-                                 @PathVariable Integer sid,
-                                 @PathVariable Integer viid,
-                                 @PathVariable Timestamp begin,
-                                 @PathVariable Timestamp end) {
+                                 @RequestParam(required = false) Integer sid,
+                                 @RequestParam(required = false) Integer viid,
+                                 @RequestParam Timestamp begin,
+                                 @RequestParam Timestamp end) {
         return new HttpResponse(orderService.conflict(sid, viid, begin, end));
     }
 
-    @RequestMapping(value = "/order/conflict/sid/{viid}/{begin}/{end}/", method = RequestMethod.GET)
-    public HttpResponse conflict(HttpServletRequest request,
-                                 @PathVariable Integer viid,
-                                 @PathVariable Timestamp begin,
-                                 @PathVariable Timestamp end) {
-        return new HttpResponse(orderService.conflict(null, viid, begin, end));
-    }
-
-    @RequestMapping(value = "/order/conflict/sid/viid/{begin}/{end}/", method = RequestMethod.GET)
-    public HttpResponse conflict(HttpServletRequest request,
-                                 @PathVariable Timestamp begin,
-                                 @PathVariable Timestamp end) {
-        return new HttpResponse(orderService.conflict(null, null, begin, end));
-    }
 }
