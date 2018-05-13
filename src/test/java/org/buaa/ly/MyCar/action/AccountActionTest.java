@@ -9,10 +9,12 @@ import org.buaa.ly.MyCar.exception.advice.DefaultAdvice;
 import org.buaa.ly.MyCar.http.ResponseStatusMsg;
 import org.buaa.ly.MyCar.http.dto.AccountDTO;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -20,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.annotation.PostConstruct;
 import javax.xml.transform.Result;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -33,7 +36,7 @@ public class AccountActionTest extends TestLoader {
 
     @Autowired DefaultAdvice defaultAdvice;
 
-    @Before
+    @PostConstruct
     public void init() {
         mockMvc = MockMvcBuilders.standaloneSetup(accountAction)
                 .setControllerAdvice(defaultAdvice)
@@ -90,6 +93,7 @@ public class AccountActionTest extends TestLoader {
     }
 
     @Test
+    @Rollback
     public void testInsert() throws Exception {
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setUsername("new-insert");
@@ -112,15 +116,17 @@ public class AccountActionTest extends TestLoader {
 
 
     @Test
+    @Rollback
     public void testUpdate() throws Exception {
         AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setUsername("admin");
         accountDTO.setPassword("new-password");
         accountDTO.setName("test-name");
         accountDTO.setPhone("123456");
         accountDTO.setSid(2);
         accountDTO.setRole(2);
 
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/account/{username}/", "admin")
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/account/")
                 .header("token", "test")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JSON.toJSONString(accountDTO));

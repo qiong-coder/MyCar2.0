@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
@@ -32,7 +33,7 @@ public class VehicleInfoCostActionTest extends TestLoader {
     @Autowired
     DefaultAdvice defaultAdvice;
 
-    @Before
+    @PostConstruct
     public void init() {
         mockMvc = MockMvcBuilders.standaloneSetup(vehicleInfoCostAction)
                 .setControllerAdvice(defaultAdvice)

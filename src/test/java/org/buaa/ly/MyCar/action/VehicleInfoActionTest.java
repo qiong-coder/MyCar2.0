@@ -22,6 +22,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.annotation.PostConstruct;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 public class VehicleInfoActionTest extends TestLoader {
@@ -32,7 +34,7 @@ public class VehicleInfoActionTest extends TestLoader {
 
     @Autowired DefaultAdvice defaultAdvice;
 
-    @Before
+    @PostConstruct
     public void init() {
         mockMvc = MockMvcBuilders.standaloneSetup(vehicleInfoAction)
                 .setControllerAdvice(defaultAdvice)

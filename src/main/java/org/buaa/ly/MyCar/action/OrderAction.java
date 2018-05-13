@@ -2,9 +2,12 @@ package org.buaa.ly.MyCar.action;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.buaa.ly.MyCar.entity.Vehicle;
 import org.buaa.ly.MyCar.http.HttpResponse;
 import org.buaa.ly.MyCar.http.dto.OrderDTO;
+import org.buaa.ly.MyCar.service.AccountService;
 import org.buaa.ly.MyCar.service.OrderService;
+import org.buaa.ly.MyCar.utils.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,21 +20,26 @@ public class OrderAction {
 
     @Autowired private OrderService orderService;
 
+    @Autowired private AccountService accountService;
+
     @RequestMapping(value = "/orders/{status}/", method = RequestMethod.GET)
-    public HttpResponse findByStatus(HttpServletRequest request,
+    public HttpResponse findByStatus(@RequestHeader String token,
                                      @PathVariable int status) {
+        accountService.check(token, RoleEnum.OPERATOR);
         return new HttpResponse(orderService.findByStatusAndVehiclesAndVehicleInfos(status));
     }
 
     @RequestMapping(value = "/orders/number/", method = RequestMethod.GET)
-    public HttpResponse countByStatus(HttpServletRequest request) {
+    public HttpResponse countByStatus(@RequestHeader String token) {
+        accountService.check(token, RoleEnum.OPERATOR);
         return new HttpResponse(orderService.findByOrdersCountByStatus());
     }
 
 
     @RequestMapping(value = "/order/{id}/", method = RequestMethod.GET)
-    public HttpResponse findById(HttpServletRequest request,
+    public HttpResponse findById(@RequestHeader String token,
                                  @PathVariable int id) {
+        accountService.check(token, RoleEnum.OPERATOR);
         return new HttpResponse(orderService.findByIdAndVehicleAndVehicleInfo(id));
     }
 

@@ -39,7 +39,9 @@ public class PreCost {
 
         if ( insurance != null ) {
             for ( int i = 0; i < insurance.size(); ++ i )
-                if ( insurance.get(i) > 0 ) day_insurance += vehicleInfoCost.getInsurance().get(i);
+                if ( insurance.get(i) > 0 ) {
+                    day_insurance += vehicleInfoCost.getInsurance().get(i);
+                }
         }
 
         do {
@@ -67,7 +69,7 @@ public class PreCost {
 
         PreCost preCost = new PreCost();
         preCost.setDay_costs(day_costs);
-        preCost.setInsurance(insurance);
+        preCost.setInsurance(vehicleInfoCost.getInsurance());
         preCost.setDiscounts(discounts);
         preCost.setTotal_cost(total_cost);
         return preCost;

@@ -11,3 +11,5 @@ INSERT INTO VehicleInfo VALUES (2, 'audi', 'displacement', 'gearbox', 'boxes', '
 
 INSERT INTO Vehicle VALUES(1, 1, 'number', 'description', 0, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 1);
 INSERT INTO Vehicle VALUES(2, 2, 'number2', 'description', 10, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 2);
+
+INSERT INTO MyCarOrder VALUES(1, 'oid', 1, 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 1, 2, 'name', 'drivers', 'identity', 'phone', 'bill', '[10000,10000,10000]', null, null,null,null,null,null,null,null,0,CURRENT_TIMESTAMP());
