@@ -80,7 +80,7 @@ public class OrderAction {
     @RequestMapping(value = "/order/drawback/{id}/", method = RequestMethod.PUT)
     public HttpResponse drawback(HttpServletRequest request,
                                  @PathVariable int id,
-                                 OrderDTO orderDTO)
+                                 @RequestBody OrderDTO orderDTO)
     {
         if ( orderService.drawback(id, orderDTO) != null ) return new HttpResponse();
         else return HttpResponse.buildErrorResponse();
@@ -89,7 +89,7 @@ public class OrderAction {
     @RequestMapping(value = "/order/finished/{id}/", method = RequestMethod.PUT)
     public HttpResponse finished(HttpServletRequest request,
                                  @PathVariable int id,
-                                 OrderDTO orderDTO)
+                                 @RequestBody OrderDTO orderDTO)
     {
         if ( orderService.finished(id, orderDTO) != null ) return new HttpResponse();
         else return HttpResponse.buildErrorResponse();
@@ -98,7 +98,7 @@ public class OrderAction {
     @RequestMapping(value = "/order/cancel/{id}/", method = RequestMethod.PUT)
     public HttpResponse cancel(HttpServletRequest request,
                                @PathVariable int id,
-                               OrderDTO orderDTO)
+                               @RequestBody OrderDTO orderDTO)
     {
         if ( orderService.cancel(id, orderDTO) != null ) return new HttpResponse();
         else return HttpResponse.buildErrorResponse();
