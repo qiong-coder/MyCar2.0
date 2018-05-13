@@ -23,12 +23,10 @@ public class PreCost {
                                 Timestamp end,
                                 List<Integer> insurance) {
         Calendar bCalendar = Calendar.getInstance();
-        Calendar eCalendar = Calendar.getInstance();
         bCalendar.setTime(begin);
-        eCalendar.setTime(end);
 
-        int bHour = bCalendar.get(Calendar.HOUR);
-        int eHour = bCalendar.get(Calendar.HOUR);
+        int bHour = TimeUtils.hour(begin);
+        int eHour = TimeUtils.hour(end);
 
         int total_cost = 0;
 
@@ -51,6 +49,7 @@ public class PreCost {
             discounts.add(new CostItem(TimeUtils.getDateFormat(bCalendar.getTime()),discount,null));
             total_cost += day_cost * discount / 100 + day_insurance;
             bCalendar.add(Calendar.DATE, 1);
+            bHour += 24;
         } while (eHour - bHour >= 6);
 
         if (eHour - bHour >= 5) {

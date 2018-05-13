@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -55,9 +56,12 @@ public class OrderActionTest extends TestLoader {
 
     @Test
     public void insertTest() throws Exception {
+        Calendar calendar = Calendar.getInstance();
         OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setBeginTime(new Timestamp(0));
-        orderDTO.setEndTime(new Timestamp(10000));
+        calendar.set(2018,0,1,9,0,0);
+        orderDTO.setBeginTime(new Timestamp(calendar.getTimeInMillis()));
+        calendar.set(2018,0,3,11,0,0);
+        orderDTO.setEndTime(new Timestamp(calendar.getTimeInMillis()));
         orderDTO.setRentSid(1);
         orderDTO.setReturnSid(1);
         orderDTO.setName("test");
@@ -65,7 +69,7 @@ public class OrderActionTest extends TestLoader {
         orderDTO.setIdentity("test-identity");
         orderDTO.setPhone("188");
         orderDTO.setBill("test-bill");
-        orderDTO.setInsurance(Lists.newArrayList(100,200,300));
+        orderDTO.setInsurance(Lists.newArrayList(1,1,0));
 
         List<CostItem> costItemList = Lists.newArrayList(new CostItem("test",1,null));
 
