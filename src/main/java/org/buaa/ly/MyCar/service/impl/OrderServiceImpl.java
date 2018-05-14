@@ -85,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
 
         List<Order> orders = Lists.newArrayList();
         Map<Integer, Vehicle> vehicleMap = Maps.newHashMap();
-        Map<Integer, VehicleInfo> vehicleInfoMap = Maps.newConcurrentMap();
+        Map<Integer, VehicleInfo> vehicleInfoMap = Maps.newHashMap();
 
         orderLogic.find(null, null, status, orders, vehicleMap, vehicleInfoMap);
 
@@ -206,6 +206,8 @@ public class OrderServiceImpl implements OrderService {
         Order order = find(id);
         if ( order.getStatus().compareTo(StatusEnum.PENDING.getStatus()) != 0 ) throw new StatusError("order's status is not pending");
 
+        orderDTO.setVid(vehicle.getId());
+        orderDTO.setStatus(StatusEnum.RENTING.getStatus());
         merge(orderDTO, order);
 
         vehicle.setBeginTime(order.getRealBeginTime());
@@ -405,6 +407,7 @@ public class OrderServiceImpl implements OrderService {
         int spare = 0;
         Map<Integer, Integer> spareMap = Maps.newHashMap();
 
+
         for ( Vehicle vehicle : vehicles ) {
             if ( !spareMap.containsKey(vehicle.getViid()) ) spareMap.put(vehicle.getViid(), vehicle.getVehicleInfo().getSpare());
             if (vehicle.getStatus().compareTo(StatusEnum.SPARE.getStatus())  == 0 )
@@ -421,7 +424,7 @@ public class OrderServiceImpl implements OrderService {
                 .used(rentingOrders.size())
                 .to_used(pendingOrders.size())
                 .sparse(spare)
-                .total(vehicles.size())
+                .total(total+rentingOrders.size())
                 .build();
     }
 }

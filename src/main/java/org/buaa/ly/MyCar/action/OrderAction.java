@@ -44,18 +44,20 @@ public class OrderAction {
     }
 
     @RequestMapping(value = "/order/{viid}/", method = RequestMethod.POST)
-    public HttpResponse insert(HttpServletRequest request,
+    public HttpResponse insert(@RequestHeader String token,
                                @PathVariable int viid,
                                @RequestBody OrderDTO orderDTO) {
+        accountService.check(token, RoleEnum.USER);
         orderDTO = orderService.insert(viid, orderDTO);
         if ( orderDTO != null ) return new HttpResponse(orderDTO);
         else return HttpResponse.buildErrorResponse();
     }
 
     @RequestMapping(value = "/order/{id}/", method = RequestMethod.PUT)
-    public HttpResponse update(HttpServletRequest request,
+    public HttpResponse update(@RequestHeader String token,
                                @PathVariable int id,
                                @RequestBody OrderDTO orderDTO) {
+        accountService.check(token, RoleEnum.USER);
         orderDTO = orderService.update(id, orderDTO);
         if ( orderDTO != null ) return new HttpResponse(orderDTO);
         else return HttpResponse.buildErrorResponse();

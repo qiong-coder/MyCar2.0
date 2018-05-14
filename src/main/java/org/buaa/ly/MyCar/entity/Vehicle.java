@@ -3,6 +3,7 @@ package org.buaa.ly.MyCar.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
+import lombok.ToString;
 import org.buaa.ly.MyCar.entity.deserilizer.StoreDeserializer;
 import org.buaa.ly.MyCar.entity.deserilizer.VehicleInfoDeserializer;
 import org.buaa.ly.MyCar.entity.serializer.StoreSerializer;
@@ -19,6 +20,7 @@ import java.util.List;
 @Entity
 @Table(name = "Vehicle")
 @DynamicInsert
+@ToString(exclude = {"vehicleInfo", "orders", "store"})
 public class Vehicle implements Serializable {
 
     @Id

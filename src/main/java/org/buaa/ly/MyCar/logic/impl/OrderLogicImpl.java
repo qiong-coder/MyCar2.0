@@ -118,19 +118,19 @@ public class OrderLogicImpl implements OrderLogic {
     public List<Order> findRentingOrders(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
         QOrder qOrder = QOrder.order;
 
-        BooleanExpression expression = null;
+        BooleanExpression expression = qOrder.status.eq(StatusEnum.RENTING.getStatus());
 
-        if ( viid != null ) expression = qOrder.viid.eq(viid);
+        if ( viid != null ) expression = expression.and(qOrder.viid.eq(viid));
 
         if ( sid != null ) {
-            expression = (expression == null ? qOrder.realReturnSid.eq(sid) : expression.and(qOrder.realReturnSid.eq(sid)));
+            expression = expression.and(qOrder.realReturnSid.eq(sid));
         }
 
         if ( begin != null ) {
             if (end == null) {
-                expression = (expression == null ? qOrder.realEndTime.lt(begin) : expression.and(qOrder.realEndTime.lt(begin)));
+                expression = expression.and(qOrder.realEndTime.loe(begin));
             } else {
-                expression = expression == null ? qOrder.realBeginTime.lt(end).and(qOrder.realEndTime.gt(begin)) : expression.and(qOrder.realBeginTime.lt(end).and(qOrder.realEndTime.gt(begin)));
+                expression = expression.and(qOrder.realBeginTime.loe(end).and(qOrder.realEndTime.goe(begin)));
             }
         }
 
@@ -144,23 +144,20 @@ public class OrderLogicImpl implements OrderLogic {
 
         QOrder qOrder = QOrder.order;
 
-        BooleanExpression expression = null;
+        BooleanExpression expression = qOrder.status.eq(StatusEnum.PENDING.getStatus());
 
-        if ( viid != null ) expression = qOrder.viid.eq(viid);
+        if ( viid != null ) expression = expression.and(qOrder.viid.eq(viid));
 
         if ( sid != null ) {
-            expression = (expression == null ? qOrder.realReturnSid.eq(sid).or(qOrder.realReturnSid.eq(sid)) : expression.and(qOrder.realReturnSid.eq(sid).or(qOrder.realReturnSid.eq(sid))));
-
+            expression = expression.and(qOrder.rentSid.eq(sid).or(qOrder.returnSid.eq(sid)));
         }
 
         if ( begin != null && end != null ) {
-            expression = expression == null ? qOrder.beginTime.lt(end).and(qOrder.endTime.gt(begin)).and(qOrder.status.eq(StatusEnum.PENDING.getStatus())) : expression.and(qOrder.beginTime.lt(end).and(qOrder.endTime.gt(begin)).and(qOrder.status.eq(StatusEnum.PENDING.getStatus())));
+            expression = expression.and(qOrder.beginTime.loe(end).and(qOrder.endTime.goe(begin)));
         }
 
-        if ( expression != null )
-            return Lists.newArrayList(orderRepository.findAll(expression));
-        else return Lists.newArrayList(orderRepository.findAll());
 
+        return Lists.newArrayList(orderRepository.findAll(expression));
     }
 
     @Override
