@@ -13,6 +13,8 @@ public interface OrderService {
 
     Order find(int id);
 
+    OrdersAndVehiclesAndVehicleInfos find(String identity, String phone, List<Integer> status, boolean exclude);
+
     OrdersAndVehiclesAndVehicleInfos findByStatusAndVehiclesAndVehicleInfos(Integer status);
 
     List<OrderCountByStatus> findByOrdersCountByStatus();
@@ -40,4 +42,5 @@ public interface OrderService {
     OrderSchedule schedule(Integer sid, Integer viid, Timestamp begin, Timestamp end);
 
     OrderConflict conflict(Integer sid, Integer viid, Timestamp begin, Timestamp end);
+
 }

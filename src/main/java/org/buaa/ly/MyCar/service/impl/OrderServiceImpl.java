@@ -80,20 +80,37 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    @Override
-    public OrdersAndVehiclesAndVehicleInfos findByStatusAndVehiclesAndVehicleInfos(Integer status) {
+    protected OrdersAndVehiclesAndVehicleInfos build(List<Order> orders) {
 
-        List<Order> orders = Lists.newArrayList();
         Map<Integer, Vehicle> vehicleMap = Maps.newHashMap();
         Map<Integer, VehicleInfo> vehicleInfoMap = Maps.newHashMap();
 
-        orderLogic.find(null, null, status, orders, vehicleMap, vehicleInfoMap);
+        for ( Order order : orders ) {
+            Vehicle vehicle = order.getVehicle();
+            if ( vehicle != null ) vehicleMap.put(vehicle.getId(), vehicle);
+
+            VehicleInfo vehicleInfo = order.getVehicleInfo();
+            if ( vehicleInfo != null ) vehicleInfoMap.put(vehicleInfo.getId(), vehicleInfo);
+        }
 
         return OrdersAndVehiclesAndVehicleInfos.builder()
                 .orders(OrderDTO.build(orders))
                 .vehicles(VehicleDTO.build(vehicleMap))
                 .vehicleInfos(VehicleInfoDTO.build(vehicleInfoMap))
                 .build();
+
+    }
+
+    @Override
+    public OrdersAndVehiclesAndVehicleInfos find(String identity, String phone, List<Integer> status, boolean exclude) {
+        List<Order> orders = orderLogic.find(identity, phone, status, exclude);
+        return build(orders);
+    }
+
+    @Override
+    public OrdersAndVehiclesAndVehicleInfos findByStatusAndVehiclesAndVehicleInfos(Integer status) {
+        List<Order> orders = orderLogic.find(null, null, status);
+        return build(orders);
     }
 
     @Override

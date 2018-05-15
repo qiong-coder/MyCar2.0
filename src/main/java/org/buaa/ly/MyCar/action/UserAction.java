@@ -3,10 +3,13 @@ package org.buaa.ly.MyCar.action;
 
 import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.http.HttpResponse;
+import org.buaa.ly.MyCar.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 @Slf4j
@@ -14,14 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserAction {
 
 
-    //@Autowired private UserService userService;
+    @Autowired private OrderService orderService;
 
-
-    @RequestMapping(value = "/order/{identity}/{phone}/", method = RequestMethod.GET)
+    @RequestMapping(value = "/orders/{identity}/{phone}/", method = RequestMethod.GET)
     public HttpResponse find(@PathVariable String identity,
                              @PathVariable String phone) {
-        //List<Order>
-        return null;
+        return new HttpResponse(orderService.find(identity,phone, null,false));
     }
 
 }

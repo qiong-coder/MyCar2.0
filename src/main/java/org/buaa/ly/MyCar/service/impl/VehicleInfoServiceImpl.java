@@ -119,7 +119,7 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
         Map<Integer, Map<Integer, List<Vehicle>>> storeVehicleMap = algorithmLogic.getStockVehicleMap();
         Map<Integer, Map<Integer, List<Order>>> neededStoreMap = algorithmLogic.getNeedOrderMap();
 
-        List<VehicleInfo> vehicleInfos = Lists.newArrayList();
+        List<VehicleInfoDTO> vehicleInfoDTOS = Lists.newArrayList();
 
         for ( Map.Entry<Integer, Map<Integer, List<Vehicle>>> sidEntry : storeVehicleMap.entrySet() ) {
 
@@ -127,16 +127,19 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
 
             for ( Map.Entry<Integer, List<Vehicle>> viidEntry : sidEntry.getValue().entrySet() ) {
 
-                VehicleInfo vehicleInfo = vehicleInfoLogic.find(viidEntry.getKey());
-
+                VehicleInfoDTO vehicleInfoDTO = VehicleInfoDTO.build(vehicleInfoLogic.find(viidEntry.getKey()));
                 if ( !neededStoreMap.containsKey(storeId) || !neededStoreMap.get(storeId).containsKey(viidEntry.getKey()) ||
-                        (neededStoreMap.get(storeId).get(viidEntry.getKey()).size() <= sidEntry.getValue().size() + vehicleInfo.getSpare()) )
-                    vehicleInfos.add(viidEntry.getValue().get(0).getVehicleInfo());
+                        (neededStoreMap.get(storeId).get(viidEntry.getKey()).size() <= sidEntry.getValue().size() + vehicleInfoDTO.getSpare()) ) {
+                    vehicleInfoDTO.setCan_rent(true);
+                } else {
+                    vehicleInfoDTO.setCan_rent(false);
+                }
+                vehicleInfoDTOS.add(vehicleInfoDTO);
             }
 
         }
 
-        return VehicleInfoDTO.build(vehicleInfos);
+        return vehicleInfoDTOS;
     }
 
     @Override

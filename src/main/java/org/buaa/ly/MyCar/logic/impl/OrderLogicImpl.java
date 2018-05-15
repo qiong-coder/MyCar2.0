@@ -20,6 +20,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Nonnull;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
@@ -58,21 +59,50 @@ public class OrderLogicImpl implements OrderLogic {
         else return Lists.newArrayList(orderRepository.findAll());
     }
 
+//    @Override
+//    public void find(String identity, String phone, List<Integer> status, boolean exclude, List<Order> orders, Map<Integer, Vehicle> vehicleMap, Map<Integer, VehicleInfo> vehicleInfoMap) {
+//        orders.addAll(find(identity, phone, status, exclude));
+//
+//        for ( Order order : orders ) {
+//            Vehicle vehicle = order.getVehicle();
+//            if ( vehicle != null ) vehicleMap.put(vehicle.getId(), vehicle);
+//
+//            VehicleInfo vehicleInfo = order.getVehicleInfo();
+//            if ( vehicleInfo != null ) vehicleInfoMap.put(vehicleInfo.getId(), vehicleInfo);
+//        }
+//
+//    }
+
     @Override
-    public void find(Integer sid, Integer viid, Integer status, List<Order> orders,
-                     Map<Integer, Vehicle> vehicleMap,
-                     Map<Integer, VehicleInfo> vehicleInfoMap) {
-        orders.addAll(find(sid, viid, status));
+    public List<Order> find(@Nonnull String identity, @Nonnull String phone, List<Integer> status, boolean exclude) {
+        QOrder qOrder = QOrder.order;
 
-        for ( Order order : orders ) {
-            Vehicle vehicle = order.getVehicle();
-            if ( vehicle != null ) vehicleMap.put(vehicle.getId(), vehicle);
+        BooleanExpression expression = qOrder.identity.eq(identity).and(qOrder.phone.eq(phone));
 
-            VehicleInfo vehicleInfo = order.getVehicleInfo();
-            if ( vehicleInfo != null ) vehicleInfoMap.put(vehicleInfo.getId(), vehicleInfo);
+        if ( status != null ) {
+            if ( !exclude ) expression = expression.and(qOrder.status.in(status));
+            else expression = expression.and(qOrder.status.in(status).not());
         }
 
+        return Lists.newArrayList(orderRepository.findAll(expression));
     }
+
+//    @Override
+//    public void find(Integer sid, Integer viid, Integer status,
+//                     List<Order> orders,
+//                     Map<Integer, Vehicle> vehicleMap,
+//                     Map<Integer, VehicleInfo> vehicleInfoMap) {
+//        orders.addAll(find(sid, viid, status));
+//
+//        for ( Order order : orders ) {
+//            Vehicle vehicle = order.getVehicle();
+//            if ( vehicle != null ) vehicleMap.put(vehicle.getId(), vehicle);
+//
+//            VehicleInfo vehicleInfo = order.getVehicleInfo();
+//            if ( vehicleInfo != null ) vehicleInfoMap.put(vehicleInfo.getId(), vehicleInfo);
+//        }
+//
+//    }
 
     public List<Order> find(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
 

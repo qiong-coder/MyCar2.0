@@ -51,6 +51,8 @@ public class VehicleInfoDTO extends DTOBase {
 
     Integer vehicleCount;
 
+    Boolean can_rent;
+
     public static VehicleInfoDTO build(VehicleInfo vehicleInfo) {
         return build(vehicleInfo, VehicleInfoDTO.class);
     }

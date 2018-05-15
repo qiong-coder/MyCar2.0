@@ -26,10 +26,8 @@ public class VehicleInfoAction {
 
 
     @RequestMapping(value = "/{id}/", method = RequestMethod.GET)
-    public HttpResponse find(@RequestHeader String token,
+    public HttpResponse find(@RequestHeader(required = false) String token,
                              @PathVariable int id) {
-        accountService.check(token, RoleEnum.OPERATOR);
-
         VehicleInfoDTO vehicleInfoDTO = vehicleInfoService.find(id);
         vehicleInfoDTO.getCost().buildFinalDayCosts();
 
@@ -37,7 +35,7 @@ public class VehicleInfoAction {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public HttpResponse find(@RequestHeader String token,
+    public HttpResponse find(@RequestHeader(required = false) String token,
                              @RequestParam(required = false) List<Integer> status,
                              @RequestParam(required = false, defaultValue = "false") boolean exclude) {
 

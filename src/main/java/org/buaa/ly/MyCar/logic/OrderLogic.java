@@ -17,10 +17,17 @@ public interface OrderLogic {
 
     List<Order> find(Integer sid, Integer viid, Integer status);
 
-    void find(Integer sid, Integer viid, Integer status,
-              List<Order> orders,
-              Map<Integer, Vehicle> vehicleMap,
-              Map<Integer, VehicleInfo> vehicleInfoMap);
+    List<Order> find(String identity, String phone, List<Integer> status, boolean exclude);
+
+//    void find(String identity, String phone, List<Integer> status, boolean exclude,
+//              List<Order> orders,
+//              Map<Integer, Vehicle> vehicleMap,
+//              Map<Integer, VehicleInfo> vehicleInfoMap);
+//
+//    void find(Integer sid, Integer viid, Integer status,
+//              List<Order> orders,
+//              Map<Integer, Vehicle> vehicleMap,
+//              Map<Integer, VehicleInfo> vehicleInfoMap);
 
     List<Order> findHistoryOrders(Integer viid, Integer vid, Timestamp begin, Timestamp end);
 
