@@ -8,6 +8,7 @@ import org.buaa.ly.MyCar.http.dto.OrderDTO;
 import org.buaa.ly.MyCar.service.AccountService;
 import org.buaa.ly.MyCar.service.OrderService;
 import org.buaa.ly.MyCar.utils.RoleEnum;
+import org.buaa.ly.MyCar.utils.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -115,22 +116,24 @@ public class OrderAction {
     }
 
     @RequestMapping(value = "/order/history", method = RequestMethod.GET)
-    public HttpResponse history(HttpServletRequest request,
+    public HttpResponse history(@RequestHeader String token,
                                 @RequestParam(required = false) Integer viid,
                                 @RequestParam(required = false) String number,
                                 @RequestParam Timestamp begin,
                                 @RequestParam Timestamp end)
     {
+        accountService.check(token, RoleEnum.OPERATOR);
         return new HttpResponse(orderService.history(viid, number, begin, end));
     }
 
     @RequestMapping(value = "/order/schedule", method = RequestMethod.GET)
-    public HttpResponse schedule(HttpServletRequest request,
+    public HttpResponse schedule(@RequestHeader String token,
                                  @RequestParam(required = false) Integer sid,
                                  @RequestParam(required = false) Integer viid,
                                  @RequestParam Timestamp begin,
                                  @RequestParam Timestamp end)
     {
+        accountService.check(token, RoleEnum.OPERATOR);
         return new HttpResponse(orderService.schedule(sid, viid, begin, end));
     }
 

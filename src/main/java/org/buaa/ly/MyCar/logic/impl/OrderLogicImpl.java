@@ -128,7 +128,7 @@ public class OrderLogicImpl implements OrderLogic {
 
         if ( begin != null ) {
             if (end == null) {
-                expression = expression.and(qOrder.realEndTime.loe(begin));
+                expression = expression.and(qOrder.realEndTime.lt(begin));
             } else {
                 expression = expression.and(qOrder.realBeginTime.loe(end).and(qOrder.realEndTime.goe(begin)));
             }

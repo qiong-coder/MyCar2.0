@@ -338,7 +338,7 @@ public class OrderServiceImpl implements OrderService {
                 int[] use = new int[days];
                 for( int i = 0; i < days; ++ i ) use[i] = 0;
 
-                if ( needVehicleInfo.containsKey(v) ) {
+                if ( needVehicleInfo != null && needVehicleInfo.containsKey(v) ) {
                     for( Order order : needVehicleInfo.get(v) ) {
                         int bIndex = TimeUtils.days(begin, order.getBeginTime());
                         int eIndex = TimeUtils.days(begin, order.getEndTime());
@@ -359,7 +359,8 @@ public class OrderServiceImpl implements OrderService {
 
                 List<ScheduleItem> scheduleItems = orderSchedules.get(store).get(vehicleInfoName);
 
-                int count = vEntry.getValue().size();
+                VehicleInfo vehicleInfo = vEntry.getValue().get(0).getVehicleInfo();
+                int count = vEntry.getValue().size() + vehicleInfo.getSpare();
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(begin);
                 ScheduleItem item = ScheduleItem.builder().begin(new Timestamp(calendar.getTimeInMillis()))
