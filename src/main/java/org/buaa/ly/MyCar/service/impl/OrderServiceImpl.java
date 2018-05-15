@@ -286,8 +286,8 @@ public class OrderServiceImpl implements OrderService {
             if ( vehicle != null ) vids.add(vehicle.getId());
             else vids.add(0);
 
-            int days = Long.valueOf(TimeUtils.days(order.getRealBeginTime().compareTo(begin) > 0 ? order.getRealBeginTime() : begin,
-                    order.getRealEndTime().compareTo(end) > 0 ? end : order.getRealEndTime() )).intValue();
+            int days = TimeUtils.daysByTime(order.getRealBeginTime().compareTo(begin) > 0 ? order.getRealBeginTime() : begin,
+                    order.getRealEndTime().compareTo(end) > 0 ? end : order.getRealEndTime() );
 
             ret_day_total += days;
 
@@ -302,7 +302,7 @@ public class OrderServiceImpl implements OrderService {
             items.add(item);
         }
 
-        int total_days = vids.size() * Long.valueOf(TimeUtils.days(begin, end)).intValue();
+        int total_days = vids.size() * Long.valueOf(TimeUtils.daysByTime(begin, end)).intValue();
 
         return OrderHistory.builder()
                 .history(items)
@@ -319,7 +319,7 @@ public class OrderServiceImpl implements OrderService {
         Map<Integer, Map<Integer, List<Vehicle>>> stockVehicleMap = algorithmLogic.getStockVehicleMap();
         Map<Integer, Map<Integer, List<Order>>> needOrderMap = algorithmLogic.getNeedOrderMap();
 
-        int days = TimeUtils.days(begin, end) + 1;
+        int days = TimeUtils.days(begin, end);
 
         Map<Integer, Map<String, List<ScheduleItem>>> orderSchedules = Maps.newHashMap();
 
@@ -336,7 +336,7 @@ public class OrderServiceImpl implements OrderService {
                 String vehicleInfoName = vEntry.getValue().get(0).getVehicleInfo().getName();
 
                 int[] use = new int[days];
-                for( int i = 0; i < days; ++ i ) use[i] = 0;
+                //for( int i = 0; i < days; ++ i ) use[i] = 0;
 
                 if ( needVehicleInfo != null && needVehicleInfo.containsKey(v) ) {
                     for( Order order : needVehicleInfo.get(v) ) {

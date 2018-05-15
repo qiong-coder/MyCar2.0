@@ -24,7 +24,11 @@ public class TimeUtils {
     }
 
     public static int days(Timestamp begin , Timestamp end) {
-        return Long.valueOf((end.getTime() - begin.getTime() + 24 * 3600 * MILLIS_PER_SECOND - 1) / (24 * 60 * 3600 * MILLIS_PER_SECOND)).intValue();
+        return hour(end)/24 - hour(begin)/24;
+    }
+
+    public static int daysByTime(Timestamp begin, Timestamp end) {
+        return Long.valueOf((end.getTime() - begin.getTime() + 24 * 3600 * MILLIS_PER_SECOND - 1) / (24 * 3600 * MILLIS_PER_SECOND)).intValue();
     }
 
     public static int hour(Timestamp timestamp) {

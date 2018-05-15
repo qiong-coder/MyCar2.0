@@ -52,7 +52,7 @@ public class VehicleInfoAction {
 
     // Timestamp参数格式为 yyyy-mm-dd HH:MM:SS 即可
     @RequestMapping(value = "/{sid}/{begin}/{end}/", method = RequestMethod.GET)
-    public HttpResponse find(@RequestHeader String token,
+    public HttpResponse find(@RequestHeader(required = false) String token,
                              @PathVariable int sid,
                              @PathVariable Timestamp begin,
                              @PathVariable Timestamp end) {

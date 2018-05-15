@@ -130,7 +130,7 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
                 VehicleInfo vehicleInfo = vehicleInfoLogic.find(viidEntry.getKey());
 
                 if ( !neededStoreMap.containsKey(storeId) || !neededStoreMap.get(storeId).containsKey(viidEntry.getKey()) ||
-                        (neededStoreMap.get(storeId).get(viidEntry.getKey()).size() < sidEntry.getValue().size() + vehicleInfo.getSpare()) )
+                        (neededStoreMap.get(storeId).get(viidEntry.getKey()).size() <= sidEntry.getValue().size() + vehicleInfo.getSpare()) )
                     vehicleInfos.add(viidEntry.getValue().get(0).getVehicleInfo());
             }
 
