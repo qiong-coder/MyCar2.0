@@ -8,11 +8,13 @@ public interface StoreLogic {
 
     Store find(int id);
 
-    List<Store> find();
+    List<Store> findByStatus(int status);
 
     Store insert(Store store);
 
     Store update(Store store);
+
+    Store updateStatus(int id, int status);
 
     Store delete(int id);
 

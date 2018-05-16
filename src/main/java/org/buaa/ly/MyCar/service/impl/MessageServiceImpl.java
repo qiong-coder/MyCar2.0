@@ -42,7 +42,7 @@ public class MessageServiceImpl implements MessageService {
             throw new CodeRequestTimeoutError();
         }
 
-        String code = String.format("%4.0f",Math.random()*10000); //TelVerificationUtil.SendCode(phone);
+        String code = "4444"; //String.format("%4.0f",Math.random()*10000); //TelVerificationUtil.SendCode(phone);
 
         if ( code == null ) throw new SendCodeError();
 

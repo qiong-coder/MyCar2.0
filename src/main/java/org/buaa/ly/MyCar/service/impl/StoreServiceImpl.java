@@ -6,6 +6,7 @@ import org.buaa.ly.MyCar.exception.NotFoundError;
 import org.buaa.ly.MyCar.http.dto.StoreDTO;
 import org.buaa.ly.MyCar.logic.StoreLogic;
 import org.buaa.ly.MyCar.service.StoreService;
+import org.buaa.ly.MyCar.utils.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public List<StoreDTO> find() {
-        List<Store> stores = storeLogic.find();
+        List<Store> stores = storeLogic.findByStatus(StatusEnum.OK.getStatus());
         if ( stores == null ) throw new NotFoundError("failure to find the store");
         else return StoreDTO.build(stores);
     }
@@ -62,6 +63,8 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public StoreDTO delete(int id) {
-        return StoreDTO.build(storeLogic.delete(id));
+        Store store = storeLogic.updateStatus(id,StatusEnum.DELETE.getStatus());
+        if ( store == null ) throw new NotFoundError("failure to find the store");
+        else return StoreDTO.build(storeLogic.updateStatus(id,StatusEnum.DELETE.getStatus()));
     }
 }

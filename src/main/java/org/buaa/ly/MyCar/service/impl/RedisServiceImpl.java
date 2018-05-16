@@ -27,9 +27,9 @@ public class RedisServiceImpl implements RedisService {
     private final int ACCOUNT_EXPIRE_DAYS=15;
 
     private final String CODE_PREFIX="mycar:code:";
-    private final int CODE_EXPIRE_MINUTES=15;
+    private final int CODE_EXPIRE_SECONDS=120;
     private final String CODE_TIMEOUT_PREFIX="mycar:code:timeout:";
-    private final int CODE_TIMEOUT_EXPIRE_MINUTES=10;
+    private final int CODE_TIMEOUT_EXPIRE_SECONDS=60;
 
     private final String PICTURE_PREFIX="mycar:picture:";
     private final int PICTURE_EXPIRE_MINUTES=15;
@@ -65,8 +65,8 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void putPhoneCode(String phone, String code) {
-        redisTemplate.opsForValue().set(CODE_TIMEOUT_PREFIX+phone,code,CODE_TIMEOUT_EXPIRE_MINUTES,TimeUnit.MINUTES);
-        redisTemplate.opsForValue().set(CODE_PREFIX+phone,code,CODE_EXPIRE_MINUTES,TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(CODE_TIMEOUT_PREFIX+phone,code,CODE_TIMEOUT_EXPIRE_SECONDS,TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(CODE_PREFIX+phone,code,CODE_EXPIRE_SECONDS,TimeUnit.SECONDS);
     }
 
     @Override

@@ -134,7 +134,7 @@ public class OrderLogicImpl implements OrderLogic {
         else if ( vid != null ) expression = qOrder.vid.eq(vid);
 
         if ( begin != null && end != null ) {
-            expression = expression == null ? qOrder.realBeginTime.lt(end).and(qOrder.realEndTime.gt(begin)) : expression.and(qOrder.realBeginTime.lt(end).and(qOrder.realEndTime.gt(begin)));
+            expression = expression == null ? qOrder.realBeginTime.loe(end).and(qOrder.realEndTime.goe(begin)) : expression.and(qOrder.realBeginTime.loe(end).and(qOrder.realEndTime.goe(begin)));
         }
 
         expression = expression == null ? qOrder.status.in(Lists.newArrayList(StatusEnum.DRAWBACK.getStatus(),StatusEnum.FINISHED.getStatus())) :

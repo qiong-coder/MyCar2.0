@@ -28,7 +28,7 @@ public class Order implements Serializable {
     @Column(name = "oid", nullable = false)
     private String oid;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "viid", nullable = false, insertable = false, updatable = false)
     //@JSONField(name = "viid", serializeUsing = VehicleInfoSerializer.class, deserializeUsing = VehicleInfoDeserializer.class)
     @JSONField(serialize = false, deserialize = false)
@@ -37,7 +37,7 @@ public class Order implements Serializable {
     @Column(name = "viid", nullable = false)
     private Integer viid;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vid", insertable = false, updatable = false)
     //@JSONField(name = "vid", serializeUsing = VehicleSerializer.class, deserializeUsing = VehicleDeserializer.class)
     @JSONField(serialize = false, deserialize = false)
@@ -54,7 +54,7 @@ public class Order implements Serializable {
     //@JSONField(name = "end") //, format = "yyyy-MM-dd HH:mm:ss")
     private Timestamp endTime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rent_sid", nullable = false, insertable = false, updatable = false)
     //@JSONField(name = "rent_sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
     @JSONField(serialize = false, deserialize = false)
@@ -64,7 +64,7 @@ public class Order implements Serializable {
     private Integer rentSid;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "return_sid", nullable = false, insertable = false, updatable = false)
     //@JSONField(name = "return_sid", serializeUsing = StoreSerializer.class, deserializeUsing = StoreDeserializer.class)
     @JSONField(serialize = false, deserialize = false)

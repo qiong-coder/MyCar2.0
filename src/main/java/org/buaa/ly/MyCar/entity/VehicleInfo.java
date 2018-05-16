@@ -69,11 +69,11 @@ public class VehicleInfo implements Serializable {
     @Column(name = "create_time")
     Timestamp createTime;
 
-    @OneToMany(mappedBy = "vehicleInfo")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "vehicleInfo")
     @JSONField(deserialize = false, serialize = false)
     List<Vehicle> vehicles;
 
-    @OneToMany(mappedBy = "vehicleInfo")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "vehicleInfo")
     @JSONField(deserialize = false, serialize = false)
     List<Order> orders;
 }

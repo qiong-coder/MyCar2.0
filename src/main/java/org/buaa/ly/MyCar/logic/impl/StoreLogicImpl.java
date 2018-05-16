@@ -31,8 +31,8 @@ public class StoreLogicImpl implements StoreLogic {
     }
 
     @Override
-    public List<Store> find() {
-        return Lists.newArrayList(storeRepository.findAll());
+    public List<Store> findByStatus(int status) {
+        return Lists.newArrayList(storeRepository.findByStatus(status));
     }
 
     @Override
@@ -44,6 +44,15 @@ public class StoreLogicImpl implements StoreLogic {
     @Override
     public Store update(Store store) {
         return storeRepository.save(store);
+    }
+
+    @Modifying
+    @Override
+    public Store updateStatus(int id, int status) {
+        Store store = find(id);
+        if ( store == null ) return null;
+        else store.setStatus(status);
+        return store;
     }
 
     @Override
