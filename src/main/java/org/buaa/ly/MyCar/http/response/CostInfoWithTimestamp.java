@@ -45,7 +45,7 @@ public class CostInfoWithTimestamp {
             int discount = vehicleInfoCost.discount(calendar);
             day_costs.put(TimeUtils.getDateFormat(calendar.getTime()), day_cost);
             discounts.put(TimeUtils.getDateFormat(calendar.getTime()), discount);
-            total_cost += day_cost * discount / 100;
+            total_cost += day_cost * discount / 10000 * 100;
             calendar.add(Calendar.DATE, 1);
             bhour += 24;
         } while ( ehour - bhour >= 6 );

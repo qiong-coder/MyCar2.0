@@ -47,7 +47,7 @@ public class PreCost {
             int discount = vehicleInfoCost.discount(bCalendar);
             day_costs.add(new CostItem(TimeUtils.getDateFormat(bCalendar.getTime()),day_cost,null));
             discounts.add(new CostItem(TimeUtils.getDateFormat(bCalendar.getTime()),discount,null));
-            total_cost += day_cost * discount / 100 + day_insurance;
+            total_cost += day_cost * discount / 10000 * 100 + day_insurance;
             bCalendar.add(Calendar.DATE, 1);
             bHour += 24;
         } while (eHour - bHour >= 6);

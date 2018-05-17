@@ -77,8 +77,7 @@ public class VehicleServiceImpl implements VehicleService {
             int status = vehicle.getStatus();
 
             if ( status == StatusEnum.OK.getStatus() || status == StatusEnum.SPARE.getStatus() ) continue;
-            if ( (status == StatusEnum.RENTING.getStatus() || status == StatusEnum.VALIDATE.getStatus())
-                    && (vehicle.getEndTime().compareTo(begin) < 0 || vehicle.getBeginTime().compareTo(end) > 0) ) continue;
+            if ( status == StatusEnum.RENTING.getStatus() && (vehicle.getEndTime().compareTo(begin) < 0 || vehicle.getBeginTime().compareTo(end) > 0) ) continue;
 
             iterator.remove();
         }

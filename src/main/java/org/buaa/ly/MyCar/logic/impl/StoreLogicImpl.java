@@ -43,6 +43,7 @@ public class StoreLogicImpl implements StoreLogic {
     @Modifying
     @Override
     public Store update(Store store) {
+
         return storeRepository.save(store);
     }
 

@@ -128,6 +128,9 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
             for ( Map.Entry<Integer, List<Vehicle>> viidEntry : sidEntry.getValue().entrySet() ) {
 
                 VehicleInfoDTO vehicleInfoDTO = VehicleInfoDTO.build(vehicleInfoLogic.find(viidEntry.getKey()));
+
+                if ( vehicleInfoDTO == null ) continue;
+
                 if ( !neededStoreMap.containsKey(storeId) || !neededStoreMap.get(storeId).containsKey(viidEntry.getKey()) ||
                         (neededStoreMap.get(storeId).get(viidEntry.getKey()).size() <= sidEntry.getValue().size() + vehicleInfoDTO.getSpare()) ) {
                     vehicleInfoDTO.setCan_rent(true);

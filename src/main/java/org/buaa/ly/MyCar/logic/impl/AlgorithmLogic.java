@@ -76,9 +76,10 @@ public class AlgorithmLogic {
             int status = vehicle.getStatus();
             if ( status == StatusEnum.OK.getStatus() || status == StatusEnum.SPARE.getStatus() ) {
                 put(vehicle.getSid(), vehicle.getViid(), vehicle, stockVehicleMap);
-            } else if ( (status == StatusEnum.FIXING.getStatus() || status == StatusEnum.VALIDATE.getStatus())
-                    && (vehicle.getEndTime().compareTo(begin) < 0 || vehicle.getBeginTime().compareTo(end) > 0 )) {
-                put(vehicle.getSid(), vehicle.getViid(), vehicle, stockVehicleMap);
+            } else if ( (status == StatusEnum.FIXING.getStatus() || status == StatusEnum.VALIDATE.getStatus()) ) {
+                if ( vehicle.getBeginTime() == null || vehicle.getEndTime() == null ) continue;
+                if( (vehicle.getEndTime().compareTo(begin) < 0 || vehicle.getBeginTime().compareTo(end) > 0 ))
+                    put(vehicle.getSid(), vehicle.getViid(), vehicle, stockVehicleMap);
             }
         }
 
@@ -86,7 +87,7 @@ public class AlgorithmLogic {
 
             int sid = order.getReturnSid();
 
-            put(sid, order.getVid(), order.getVehicle(), stockVehicleMap);
+            put(sid, order.getViid(), order.getVehicle(), stockVehicleMap);
 
         }
 

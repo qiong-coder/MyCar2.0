@@ -27,7 +27,7 @@ public class CostInfoResponse extends VehicleInfoCost {
             List<Integer> final_month_day_cost = Lists.newArrayListWithCapacity(month_day_costs.size());
 
             for ( int j = 0; j < month_day_costs.size(); ++ j ) {
-                final_month_day_cost.add(month_day_costs.get(j)*month_discounts.get(j)/100);
+                final_month_day_cost.add(month_day_costs.get(j)*month_discounts.get(j)/10000*100);
             }
 
             final_day_costs.add(final_month_day_cost);

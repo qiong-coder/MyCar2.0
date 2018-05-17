@@ -6,7 +6,9 @@ import org.buaa.ly.MyCar.exception.NotFoundError;
 import org.buaa.ly.MyCar.http.dto.StoreDTO;
 import org.buaa.ly.MyCar.logic.StoreLogic;
 import org.buaa.ly.MyCar.service.StoreService;
+import org.buaa.ly.MyCar.utils.BeanCopyUtils;
 import org.buaa.ly.MyCar.utils.StatusEnum;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;
@@ -51,11 +53,11 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public StoreDTO update(int id, StoreDTO storeDTO) {
 
-        storeDTO.setId(id);
+        Store store = storeLogic.find(id);
 
-        if ( storeLogic.count(id) == 0 ) throw new NotFoundError("failure to find the store");
+        if ( store == null ) throw new NotFoundError("failure to find the store");
 
-        Store store = storeLogic.update(storeDTO.build());
+        BeanCopyUtils.copyPropertiesIgnoreNull(storeDTO.build(), store);
 
         return StoreDTO.build(store);
 
