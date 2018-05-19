@@ -114,11 +114,11 @@ public class OrderAction {
     }
 
     @RequestMapping(value = "/order/cancel/{id}/", method = RequestMethod.PUT)
-    public HttpResponse cancel(@RequestHeader String token,
+    public HttpResponse cancel(@RequestHeader(required = false) String token,
                                @PathVariable int id,
                                @RequestBody OrderDTO orderDTO)
     {
-        accountService.check(token, RoleEnum.OPERATOR);
+        //accountService.check(token, RoleEnum.OPERATOR);
         if ( orderService.cancel(id, orderDTO) != null ) return new HttpResponse();
         else return HttpResponse.buildErrorResponse();
     }
