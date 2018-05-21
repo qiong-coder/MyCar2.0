@@ -3,6 +3,7 @@ package org.buaa.ly.MyCar.logic.impl;
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.entity.Order;
 import org.buaa.ly.MyCar.entity.QOrder;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -104,7 +106,7 @@ public class OrderLogicImpl implements OrderLogic {
 //
 //    }
 
-    public List<Order> find(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
+    public List<Order> find(Integer sid, Integer viid, @Nonnull Timestamp begin, @Nonnull Timestamp end) {
 
         QOrder qOrder = QOrder.order;
 
@@ -145,7 +147,7 @@ public class OrderLogicImpl implements OrderLogic {
     }
 
     @Override
-    public List<Order> findRentingOrders(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
+    public List<Order> findRentingOrders(Integer sid, Integer viid, @Nonnull Timestamp begin, Timestamp end) {
         QOrder qOrder = QOrder.order;
 
         BooleanExpression expression = qOrder.status.eq(StatusEnum.RENTING.getStatus());
@@ -156,12 +158,10 @@ public class OrderLogicImpl implements OrderLogic {
             expression = expression.and(qOrder.realReturnSid.eq(sid));
         }
 
-        if ( begin != null ) {
-            if (end == null) {
-                expression = expression.and(qOrder.realEndTime.lt(begin));
-            } else {
-                expression = expression.and(qOrder.realBeginTime.loe(end).and(qOrder.realEndTime.goe(begin)));
-            }
+        if (end == null) {
+            expression = expression.and(qOrder.realEndTime.lt(begin));
+        } else {
+            expression = expression.and(qOrder.realBeginTime.loe(end).and(qOrder.realEndTime.goe(begin)));
         }
 
         if ( expression != null )
@@ -170,7 +170,35 @@ public class OrderLogicImpl implements OrderLogic {
     }
 
     @Override
-    public List<Order> findPendingOrders(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
+    public List<Order> findRentingOrders(Collection<Integer> sids, Integer viid, @Nonnull Timestamp begin, Timestamp end) {
+
+        QOrder qOrder = QOrder.order;
+
+        BooleanExpression expression = qOrder.status.eq(StatusEnum.RENTING.getStatus());
+
+        if ( viid != null ) expression = expression.and(qOrder.viid.eq(viid));
+
+        if ( sids != null && !sids.isEmpty() ) {
+            expression = expression.and(qOrder.realReturnSid.in(sids));
+        }
+
+
+        if (end == null) {
+            expression = expression.and(qOrder.realEndTime.lt(begin));
+        } else {
+            expression = expression.and(qOrder.realBeginTime.loe(end).and(qOrder.realEndTime.goe(begin)));
+        }
+
+
+        if ( expression != null )
+            return Lists.newArrayList(orderRepository.findAll(expression));
+        else return Lists.newArrayList(orderRepository.findAll());
+
+    }
+
+
+    @Override
+    public List<Order> findPendingOrders(Integer sid, Integer viid, Timestamp begin, @Nonnull Timestamp end) {
 
         QOrder qOrder = QOrder.order;
 
@@ -182,9 +210,28 @@ public class OrderLogicImpl implements OrderLogic {
             expression = expression.and(qOrder.rentSid.eq(sid).or(qOrder.returnSid.eq(sid)));
         }
 
-        if ( begin != null && end != null ) {
-            expression = expression.and(qOrder.beginTime.loe(end).and(qOrder.endTime.goe(begin)));
+
+        if ( begin != null ) expression = expression.and(qOrder.beginTime.loe(end).and(qOrder.endTime.goe(begin)));
+        else expression = expression.and(qOrder.realBeginTime.loe(end));
+
+
+        return Lists.newArrayList(orderRepository.findAll(expression));
+    }
+
+    @Override
+    public List<Order> findPendingOrders(Collection<Integer> sids, Integer viid, Timestamp begin, @Nonnull Timestamp end) {
+        QOrder qOrder = QOrder.order;
+
+        BooleanExpression expression = qOrder.status.eq(StatusEnum.PENDING.getStatus());
+
+        if ( viid != null ) expression = expression.and(qOrder.viid.eq(viid));
+
+        if ( sids != null && !sids.isEmpty() ) {
+            expression = expression.and(qOrder.rentSid.in(sids).or(qOrder.returnSid.in(sids)));
         }
+
+        if ( begin != null ) expression = expression.and(qOrder.beginTime.loe(end).and(qOrder.endTime.goe(begin)));
+        else expression = expression.and(qOrder.realBeginTime.loe(end));
 
 
         return Lists.newArrayList(orderRepository.findAll(expression));
@@ -221,7 +268,7 @@ public class OrderLogicImpl implements OrderLogic {
     @Override
     public Order update(int id, int status) {
         Order o = orderRepository.findById(id);
-        if ( o == null ) return o;
+        if ( o == null ) return null;
         else {
             o.setStatus(status);
             return o;

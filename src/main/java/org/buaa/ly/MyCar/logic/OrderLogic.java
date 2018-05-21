@@ -7,7 +7,9 @@ import org.buaa.ly.MyCar.http.dto.OrderDTO;
 import org.buaa.ly.MyCar.http.dto.VehicleDTO;
 import org.buaa.ly.MyCar.http.dto.VehicleInfoDTO;
 
+import javax.annotation.Nonnull;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +33,13 @@ public interface OrderLogic {
 
     List<Order> findHistoryOrders(Integer viid, Integer vid, Timestamp begin, Timestamp end);
 
-    List<Order> findRentingOrders(Integer sid, Integer viid, Timestamp begin, Timestamp end);
+    List<Order> findRentingOrders(Integer sid, Integer viid, @Nonnull Timestamp begin, Timestamp end);
 
-    List<Order> findPendingOrders(Integer sid, Integer viid, Timestamp begin, Timestamp end);
+    List<Order> findRentingOrders(Collection<Integer> sids, Integer viid,  @Nonnull Timestamp begin, Timestamp end);
+
+    List<Order> findPendingOrders(Integer sid, Integer viid, Timestamp begin, @Nonnull Timestamp end);
+
+    List<Order> findPendingOrders(Collection<Integer> sids, Integer viid, Timestamp begin, @Nonnull Timestamp end);
 
     void countByStatus(Integer status,
                        Map<Integer, Integer> viidStatusCount);

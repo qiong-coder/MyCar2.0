@@ -12,7 +12,7 @@ public interface VehicleInfoService {
 
     List<VehicleInfoDTO> find(List<Integer> status, boolean exclude);
 
-    List<VehicleInfoDTO> find(int sid, Timestamp begin, Timestamp end);
+    List<VehicleInfoDTO> find(String city, Integer sid, Timestamp begin, Timestamp end);
 
     VehicleInfoDTO insert(VehicleInfoDTO vehicleInfoDTO, Part attachment);
 

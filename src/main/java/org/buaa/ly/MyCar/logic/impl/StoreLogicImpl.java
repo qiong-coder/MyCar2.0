@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.entity.Store;
 import org.buaa.ly.MyCar.logic.StoreLogic;
 import org.buaa.ly.MyCar.repository.StoreRepository;
+import org.buaa.ly.MyCar.utils.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,11 @@ public class StoreLogicImpl implements StoreLogic {
     @Override
     public List<Store> findByStatus(int status) {
         return Lists.newArrayList(storeRepository.findByStatus(status));
+    }
+
+    @Override
+    public List<Store> findByCity(String city) {
+        return Lists.newArrayList(storeRepository.findByCityAAndStatus(city, StatusEnum.OK.getStatus()));
     }
 
     @Override

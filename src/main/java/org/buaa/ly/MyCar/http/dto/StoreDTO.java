@@ -24,6 +24,8 @@ public class StoreDTO extends DTOBase {
 
     String phone;
 
+    String city;
+
     Integer status;
 
     @JsonProperty(value = "create_time")

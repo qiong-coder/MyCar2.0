@@ -32,16 +32,9 @@ public class VehicleLogicImpl implements VehicleLogic {
 
     private VehicleRepository vehicleRepository;
 
-    private VehicleInfoRepository vehicleInfoRepository;
-
     @Autowired
     void setVehicleRepository(VehicleRepository vehicleRepository) {
         this.vehicleRepository = vehicleRepository;
-    }
-
-    @Autowired
-    public void setVehicleInfoRepository(VehicleInfoRepository vehicleInfoRepository) {
-        this.vehicleInfoRepository = vehicleInfoRepository;
     }
 
     @Override
@@ -92,7 +85,7 @@ public class VehicleLogicImpl implements VehicleLogic {
             expression = expression == null ? qVehicle.viid.eq(viid) : expression.and(qVehicle.viid.eq(viid));
         }
 
-        if ( status != null ) {
+        if ( status != null || !status.isEmpty() ) {
             if ( !exclude ) {
                 expression = expression == null ? qVehicle.status.in(status) : expression.and(qVehicle.status.in(status));
             } else {
@@ -104,6 +97,29 @@ public class VehicleLogicImpl implements VehicleLogic {
         else return Lists.newArrayList(vehicleRepository.findAll());
     }
 
+    @Override
+    public List<Vehicle> find(Collection<Integer> sids, Integer viid, Collection<Integer> status, boolean exclude) {
+
+        QVehicle qVehicle = QVehicle.vehicle;
+
+        BooleanExpression expression = null;
+
+        if (sids != null && !sids.isEmpty() ) expression = qVehicle.sid.in(sids);
+
+        if (viid != null) expression = expression == null? qVehicle.viid.eq(viid) : expression.and(qVehicle.viid.eq(viid));
+
+
+        if ( status != null && !status.isEmpty() ) {
+            if ( !exclude ) {
+                expression = expression == null ? qVehicle.status.in(status) : expression.and(qVehicle.status.in(status));
+            } else {
+                expression = expression == null ? qVehicle.status.in(status).not() : expression.and(qVehicle.status.in(status).not());
+            }
+        }
+
+        if ( expression != null ) return Lists.newArrayList(vehicleRepository.findAll(expression));
+        else return Lists.newArrayList(vehicleRepository.findAll());
+    }
 
 //    @Override
 //    public List<Vehicle> findStatusNot(Integer viid, Integer sid, Integer status) {QVehicle vehicle = QVehicle.vehicle;

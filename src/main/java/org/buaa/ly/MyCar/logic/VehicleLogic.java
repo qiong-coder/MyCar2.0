@@ -17,6 +17,8 @@ public interface VehicleLogic {
 
     List<Vehicle> find(Integer sid, Integer viid, Collection<Integer> status, boolean exclude);
 
+    List<Vehicle> find(Collection<Integer> sids, Integer viid, Collection<Integer> status, boolean exclude);
+
     Vehicle insert(Vehicle vehicle);
 
     Vehicle update(Vehicle vehicle);

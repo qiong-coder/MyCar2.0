@@ -18,10 +18,7 @@ import org.buaa.ly.MyCar.http.dto.VehicleDTO;
 import org.buaa.ly.MyCar.http.dto.VehicleInfoDTO;
 import org.buaa.ly.MyCar.http.response.*;
 import org.buaa.ly.MyCar.internal.*;
-import org.buaa.ly.MyCar.logic.OrderLogic;
-import org.buaa.ly.MyCar.logic.PayLogic;
-import org.buaa.ly.MyCar.logic.VehicleInfoLogic;
-import org.buaa.ly.MyCar.logic.VehicleLogic;
+import org.buaa.ly.MyCar.logic.*;
 import org.buaa.ly.MyCar.logic.impl.AlgorithmLogic;
 import org.buaa.ly.MyCar.service.OrderService;
 import org.buaa.ly.MyCar.utils.BeanCopyUtils;
@@ -47,6 +44,8 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderLogic orderLogic;
 
+    private StoreLogic storeLogic;
+
     private VehicleLogic vehicleLogic;
 
     private VehicleInfoLogic vehicleInfoLogic;
@@ -56,6 +55,11 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     public void setOrderLogic(OrderLogic orderLogic) {
         this.orderLogic = orderLogic;
+    }
+
+    @Autowired
+    public void setStoreLogic(StoreLogic storeLogic) {
+        this.storeLogic = storeLogic;
     }
 
     @Autowired
@@ -331,9 +335,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderSchedule schedule(Integer sid, Integer viid, Timestamp begin, Timestamp end) {
 
-        AlgorithmLogic algorithmLogic = new AlgorithmLogic(sid, viid, begin, end, vehicleLogic, orderLogic);
+        AlgorithmLogic algorithmLogic = new AlgorithmLogic(null, sid, viid, begin, end, storeLogic, vehicleLogic, orderLogic);
 
-        Map<Integer, Map<Integer, List<Vehicle>>> stockVehicleMap = algorithmLogic.getStockVehicleMap();
+        Map<Integer, Map<Integer, List<Vehicle>>> stockVehicleMap = algorithmLogic.getStockMap();
         Map<Integer, Map<Integer, List<Order>>> needOrderMap = algorithmLogic.getNeedOrderMap();
 
         int days = TimeUtils.days(begin, end);

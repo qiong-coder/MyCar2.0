@@ -10,6 +10,8 @@ public interface StoreLogic {
 
     List<Store> findByStatus(int status);
 
+    List<Store> findByCity(String city);
+
     Store insert(Store store);
 
     Store update(Store store);

@@ -36,6 +36,9 @@ public class Store implements Serializable {
     @Column(name = "phone")
     String phone;
 
+    @Column(name = "city")
+    String city;
+
     @Column(name = "status")
     Integer status;
 

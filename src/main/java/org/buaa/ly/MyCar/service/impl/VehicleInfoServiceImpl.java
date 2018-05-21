@@ -9,10 +9,7 @@ import org.buaa.ly.MyCar.entity.VehicleInfo;
 import org.buaa.ly.MyCar.exception.BaseError;
 import org.buaa.ly.MyCar.exception.NotFoundError;
 import org.buaa.ly.MyCar.http.dto.VehicleInfoDTO;
-import org.buaa.ly.MyCar.logic.OrderLogic;
-import org.buaa.ly.MyCar.logic.VehicleInfoCostLogic;
-import org.buaa.ly.MyCar.logic.VehicleInfoLogic;
-import org.buaa.ly.MyCar.logic.VehicleLogic;
+import org.buaa.ly.MyCar.logic.*;
 import org.buaa.ly.MyCar.logic.impl.AlgorithmLogic;
 import org.buaa.ly.MyCar.service.UploadService;
 import org.buaa.ly.MyCar.service.VehicleInfoService;
@@ -41,13 +38,15 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
 
     private OrderLogic orderLogic;
 
+    private StoreLogic storeLogic;
+
     @Autowired
     void setVehicleInfoLogic(VehicleInfoLogic vehicleInfoLogic) {
         this.vehicleInfoLogic = vehicleInfoLogic;
     }
 
     @Autowired
-    public void setVehicleLogic(VehicleLogic vehicleLogic) {
+    void setVehicleLogic(VehicleLogic vehicleLogic) {
         this.vehicleLogic = vehicleLogic;
     }
 
@@ -57,15 +56,17 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
     }
 
     @Autowired
-    public void setVehicleInfoCostLogic(VehicleInfoCostLogic vehicleInfoCostLogic) {
+    void setVehicleInfoCostLogic(VehicleInfoCostLogic vehicleInfoCostLogic) {
         this.vehicleInfoCostLogic = vehicleInfoCostLogic;
     }
 
     @Autowired
-    public void setOrderLogic(OrderLogic orderLogic) {
+    void setOrderLogic(OrderLogic orderLogic) {
         this.orderLogic = orderLogic;
     }
 
+    @Autowired
+    void setStoreLogic(StoreLogic storeLogic) { this.storeLogic = storeLogic; }
 
     @Override
     public VehicleInfoDTO insert(VehicleInfoDTO vehicleInfoDTO, Part attachment) {
@@ -112,38 +113,75 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
     }
 
     @Override
-    public List<VehicleInfoDTO> find(int sid, Timestamp begin, Timestamp end) {
+    public List<VehicleInfoDTO> find(String city, Integer sid, Timestamp begin, Timestamp end) {
 
-        AlgorithmLogic algorithmLogic = new AlgorithmLogic(sid, null, begin, end, vehicleLogic, orderLogic);
-
-        Map<Integer, Map<Integer, List<Vehicle>>> storeVehicleMap = algorithmLogic.getStockVehicleMap();
-        Map<Integer, Map<Integer, List<Order>>> neededStoreMap = algorithmLogic.getNeedOrderMap();
-
+        AlgorithmLogic algorithmLogic = new AlgorithmLogic(city, sid, null, begin, end, storeLogic, vehicleLogic, orderLogic);
         List<VehicleInfoDTO> vehicleInfoDTOS = Lists.newArrayList();
 
-        for ( Map.Entry<Integer, Map<Integer, List<Vehicle>>> sidEntry : storeVehicleMap.entrySet() ) {
+        if ( city != null ) {
+            Map<String, Map<Integer, List<Vehicle>>> storeCityMap = algorithmLogic.getStockCityMap();
+            Map<String, Map<Integer, Integer>> cityTransformMap = algorithmLogic.getStockCityTransformMap();
+            Map<String, Map<Integer, List<Order>>> cityNeededStoreMap = algorithmLogic.getNeedCityOrderMap();
 
-            int storeId = sidEntry.getKey();
+            for ( Map.Entry<String, Map<Integer, List<Vehicle>>> sidEntry : storeCityMap.entrySet() ) {
 
-            for ( Map.Entry<Integer, List<Vehicle>> viidEntry : sidEntry.getValue().entrySet() ) {
+                String c = sidEntry.getKey();
 
-                VehicleInfoDTO vehicleInfoDTO = VehicleInfoDTO.build(vehicleInfoLogic.find(viidEntry.getKey()));
+                for ( Map.Entry<Integer, List<Vehicle>> viidEntry : sidEntry.getValue().entrySet() ) {
 
-                if ( vehicleInfoDTO == null ) continue;
+                    VehicleInfoDTO vehicleInfoDTO = VehicleInfoDTO.build(vehicleInfoLogic.find(viidEntry.getKey()));
 
-                if ( !neededStoreMap.containsKey(storeId) || !neededStoreMap.get(storeId).containsKey(viidEntry.getKey()) ||
-                        (neededStoreMap.get(storeId).get(viidEntry.getKey()).size() <= sidEntry.getValue().size() + vehicleInfoDTO.getSpare()) ) {
-                    vehicleInfoDTO.setCan_rent(true);
-                } else {
-                    vehicleInfoDTO.setCan_rent(false);
+                    if ( vehicleInfoDTO == null ) continue;
+
+                    int transform = 0;
+                    if ( cityTransformMap.containsKey(c) && cityTransformMap.get(c).containsKey(viidEntry.getKey()) )
+                        transform = cityTransformMap.get(c).get(viidEntry.getKey());
+
+                    if ( !cityNeededStoreMap.containsKey(c) || !cityNeededStoreMap.get(c).containsKey(viidEntry.getKey()) ||
+                            (cityNeededStoreMap.get(c).get(viidEntry.getKey()).size() <= sidEntry.getValue().size() + vehicleInfoDTO.getSpare() + transform) ) {
+                        vehicleInfoDTO.setCan_rent(true);
+                    } else {
+                        vehicleInfoDTO.setCan_rent(false);
+                    }
+                    vehicleInfoDTOS.add(vehicleInfoDTO);
                 }
-                vehicleInfoDTOS.add(vehicleInfoDTO);
-            }
 
+            }
+        } else {
+
+            Map<Integer, Map<Integer, List<Vehicle>>> storeVehicleMap = algorithmLogic.getStockMap();
+            Map<Integer, Map<Integer, Integer>> transformMap = algorithmLogic.getStockTransformMap();
+            Map<Integer, Map<Integer, List<Order>>> neededStoreMap = algorithmLogic.getNeedOrderMap();
+
+            for (Map.Entry<Integer, Map<Integer, List<Vehicle>>> sidEntry : storeVehicleMap.entrySet()) {
+
+                int storeId = sidEntry.getKey();
+
+                for (Map.Entry<Integer, List<Vehicle>> viidEntry : sidEntry.getValue().entrySet()) {
+
+                    VehicleInfoDTO vehicleInfoDTO = VehicleInfoDTO.build(vehicleInfoLogic.find(viidEntry.getKey()));
+
+                    if (vehicleInfoDTO == null) continue;
+
+                    int transform = 0;
+                    if (transformMap.containsKey(storeId) && transformMap.get(storeId).containsKey(viidEntry.getKey()))
+                        transform = transformMap.get(storeId).get(viidEntry.getKey());
+
+                    if (!neededStoreMap.containsKey(storeId) || !neededStoreMap.get(storeId).containsKey(viidEntry.getKey()) ||
+                            (neededStoreMap.get(storeId).get(viidEntry.getKey()).size() <= sidEntry.getValue().size() + vehicleInfoDTO.getSpare() + transform)) {
+                        vehicleInfoDTO.setCan_rent(true);
+                    } else {
+                        vehicleInfoDTO.setCan_rent(false);
+                    }
+                    vehicleInfoDTOS.add(vehicleInfoDTO);
+                }
+
+            }
         }
 
         return vehicleInfoDTOS;
     }
+
 
     @Override
     public VehicleInfoDTO delete(int id, boolean force) {
