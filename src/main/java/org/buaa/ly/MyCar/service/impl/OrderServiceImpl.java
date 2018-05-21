@@ -8,10 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.entity.Order;
 import org.buaa.ly.MyCar.entity.Vehicle;
 import org.buaa.ly.MyCar.entity.VehicleInfo;
-import org.buaa.ly.MyCar.exception.BaseError;
-import org.buaa.ly.MyCar.exception.CheckError;
-import org.buaa.ly.MyCar.exception.NotFoundError;
-import org.buaa.ly.MyCar.exception.StatusError;
+import org.buaa.ly.MyCar.exception.*;
 import org.buaa.ly.MyCar.http.dto.OrderDTO;
 import org.buaa.ly.MyCar.http.dto.VehicleDTO;
 import org.buaa.ly.MyCar.http.dto.VehicleInfoDTO;
@@ -147,6 +144,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDTO insert(int viid, OrderDTO orderDTO) {
+
+        List<Order> orders = orderLogic.find(orderDTO.getIdentity(), Lists.newArrayList(StatusEnum.PENDING.getStatus(),StatusEnum.RENTING.getStatus()));
+
+        if ( !orders.isEmpty() ) throw new OrderIdentityDuplicate("identity is duplicate");
+
         VehicleInfo vehicleInfo = vehicleInfoLogic.find(viid);
         if  ( vehicleInfo == null ) throw new NotFoundError(String.format("failure to find the vehicle info - %s",viid));
 

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.entity.Order;
 import org.buaa.ly.MyCar.entity.Store;
 import org.buaa.ly.MyCar.entity.Vehicle;
+import org.buaa.ly.MyCar.entity.VehicleInfo;
 import org.buaa.ly.MyCar.logic.OrderLogic;
 import org.buaa.ly.MyCar.logic.StoreLogic;
 import org.buaa.ly.MyCar.logic.VehicleLogic;
@@ -24,6 +25,8 @@ import java.util.Set;
 @Data
 public class AlgorithmLogic {
 
+    private Map<Integer, VehicleInfo> vehicleInfoMap = Maps.newHashMap();
+
     private List<Vehicle> vehicles;
 
     private List<Order> rentingOrders;
@@ -38,19 +41,19 @@ public class AlgorithmLogic {
 
     Timestamp end;
 
-    private Map<Integer, String> sidCityMap;
+    private Map<Integer, String> sidCityMap = Maps.newHashMap();
 
-    private Map<Integer, Map<Integer, List<Vehicle>>> stockMap;
+    private Map<Integer, Map<Integer, List<Vehicle>>> stockMap = Maps.newHashMap();
 
-    private Map<Integer, Map<Integer, Integer>> stockTransformMap;
+    private Map<Integer, Map<Integer, Integer>> stockTransformMap = Maps.newHashMap();
 
-    private Map<Integer, Map<Integer, List<Order>>> needOrderMap;
+    private Map<Integer, Map<Integer, List<Order>>> needOrderMap = Maps.newHashMap();
 
-    private Map<String, Map<Integer, List<Vehicle>>> stockCityMap;
+    private Map<String, Map<Integer, List<Vehicle>>> stockCityMap = Maps.newHashMap();;
 
-    private Map<String, Map<Integer, Integer>> stockCityTransformMap;
+    private Map<String, Map<Integer, Integer>> stockCityTransformMap = Maps.newHashMap();;
 
-    private Map<String, Map<Integer, List<Order>>> needCityOrderMap;
+    private Map<String, Map<Integer, List<Order>>> needCityOrderMap = Maps.newHashMap();;
 
     public AlgorithmLogic(String city, Integer sid,
                           Integer viid, Timestamp begin, Timestamp end,
@@ -68,7 +71,6 @@ public class AlgorithmLogic {
             List<Store> stores = storeLogic.findByCity(city);
 
             Set<Integer> sids = Sets.newHashSet();
-            sidCityMap = Maps.newHashMap();
 
             for ( Store store : stores ) {
                 sids.add(store.getId());
@@ -92,20 +94,7 @@ public class AlgorithmLogic {
 
         }
 
-
-        this.stockMap = Maps.newHashMap();
-
-        this.stockTransformMap = Maps.newHashMap();
-
-        this.needOrderMap = Maps.newHashMap();
-
         simulate();
-
-        this.stockCityMap = Maps.newHashMap();
-
-        this.stockCityTransformMap = Maps.newHashMap();
-
-        this.needCityOrderMap = Maps.newHashMap();
 
         mergeList(stockMap, stockCityMap);
         mergeInteger(stockTransformMap, stockCityTransformMap);
@@ -188,7 +177,11 @@ public class AlgorithmLogic {
     private void simulate() {
 
         for ( Vehicle vehicle : vehicles ) {
+
             int status = vehicle.getStatus();
+
+            if ( !vehicleInfoMap.containsKey(vehicle.getViid()) ) vehicleInfoMap.put(vehicle.getViid(), vehicle.getVehicleInfo());
+
             if ( status == StatusEnum.OK.getStatus() || status == StatusEnum.SPARE.getStatus() ) {
                 put(vehicle.getSid(), vehicle.getViid(), vehicle, stockMap);
             } else if ( (status == StatusEnum.FIXING.getStatus() || status == StatusEnum.VALIDATE.getStatus()) ) {
@@ -196,6 +189,8 @@ public class AlgorithmLogic {
                 if( (vehicle.getEndTime().compareTo(begin) < 0 || vehicle.getBeginTime().compareTo(end) > 0 ))
                     put(vehicle.getSid(), vehicle.getViid(), vehicle, stockMap);
             }
+
+
         }
 
         for ( Order order : rentingOrders ) {

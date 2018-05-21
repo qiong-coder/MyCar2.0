@@ -107,7 +107,7 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
         List<VehicleInfoDTO> vehicleInfoDTOS = VehicleInfoDTO.build(vehicleInfoLogic.find(status, exclude));
         for ( VehicleInfoDTO vehicleInfoDTO : vehicleInfoDTOS ) {
             vehicleInfoDTO.setVehicleCount(vehicleLogic.count(null,vehicleInfoDTO.getId(),
-                    Lists.newArrayList(StatusEnum.OK.getStatus()),false));
+                    Lists.newArrayList(StatusEnum.OK.getStatus(), StatusEnum.SPARE.getStatus(), StatusEnum.RENTING.getStatus()),false));
         }
         return vehicleInfoDTOS;
     }
@@ -127,22 +127,27 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
 
                 String c = sidEntry.getKey();
 
-                for ( Map.Entry<Integer, List<Vehicle>> viidEntry : sidEntry.getValue().entrySet() ) {
+                for ( Map.Entry<Integer, VehicleInfo> vehicleInfoEntry : algorithmLogic.getVehicleInfoMap().entrySet() ) {
 
-                    VehicleInfoDTO vehicleInfoDTO = VehicleInfoDTO.build(vehicleInfoLogic.find(viidEntry.getKey()));
-
-                    if ( vehicleInfoDTO == null ) continue;
-
+                    VehicleInfoDTO vehicleInfoDTO = VehicleInfoDTO.build(vehicleInfoEntry.getValue());
+                    int viid = vehicleInfoDTO.getId();
                     int transform = 0;
-                    if ( cityTransformMap.containsKey(c) && cityTransformMap.get(c).containsKey(viidEntry.getKey()) )
-                        transform = cityTransformMap.get(c).get(viidEntry.getKey());
+                    int count = 0;
 
-                    if ( !cityNeededStoreMap.containsKey(c) || !cityNeededStoreMap.get(c).containsKey(viidEntry.getKey()) ||
-                            (cityNeededStoreMap.get(c).get(viidEntry.getKey()).size() <= sidEntry.getValue().size() + vehicleInfoDTO.getSpare() + transform) ) {
-                        vehicleInfoDTO.setCan_rent(true);
-                    } else {
-                        vehicleInfoDTO.setCan_rent(false);
+                    if ( sidEntry.getValue().containsKey(viid) ) count = sidEntry.getValue().size();
+
+                    if ( cityTransformMap.containsKey(c) && cityTransformMap.get(c).containsKey(viid) ) transform = cityTransformMap.get(c).get(viid);
+
+                    if ( count + vehicleInfoDTO.getSpare() + transform == 0 ) vehicleInfoDTO.setCan_rent(false);
+                    else {
+                        if ( !cityNeededStoreMap.containsKey(c) || !cityNeededStoreMap.get(c).containsKey(viid) ||
+                                (cityNeededStoreMap.get(c).get(viid).size() <= count + vehicleInfoDTO.getSpare() + transform) ) {
+                            vehicleInfoDTO.setCan_rent(true);
+                        } else {
+                            vehicleInfoDTO.setCan_rent(false);
+                        }
                     }
+
                     vehicleInfoDTOS.add(vehicleInfoDTO);
                 }
 
@@ -157,21 +162,25 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
 
                 int storeId = sidEntry.getKey();
 
-                for (Map.Entry<Integer, List<Vehicle>> viidEntry : sidEntry.getValue().entrySet()) {
+                for ( Map.Entry<Integer, VehicleInfo> vehicleInfoEntry : algorithmLogic.getVehicleInfoMap().entrySet() ) {
 
-                    VehicleInfoDTO vehicleInfoDTO = VehicleInfoDTO.build(vehicleInfoLogic.find(viidEntry.getKey()));
-
-                    if (vehicleInfoDTO == null) continue;
-
+                    VehicleInfoDTO vehicleInfoDTO = VehicleInfoDTO.build(vehicleInfoEntry.getValue());
+                    int viid = vehicleInfoDTO.getId();
+                    int count = 0;
                     int transform = 0;
-                    if (transformMap.containsKey(storeId) && transformMap.get(storeId).containsKey(viidEntry.getKey()))
-                        transform = transformMap.get(storeId).get(viidEntry.getKey());
 
-                    if (!neededStoreMap.containsKey(storeId) || !neededStoreMap.get(storeId).containsKey(viidEntry.getKey()) ||
-                            (neededStoreMap.get(storeId).get(viidEntry.getKey()).size() <= sidEntry.getValue().size() + vehicleInfoDTO.getSpare() + transform)) {
-                        vehicleInfoDTO.setCan_rent(true);
-                    } else {
-                        vehicleInfoDTO.setCan_rent(false);
+                    if ( sidEntry.getValue().containsKey(viid) ) count = sidEntry.getValue().size();
+
+                    if (transformMap.containsKey(storeId) && transformMap.get(storeId).containsKey(viid)) transform = transformMap.get(storeId).get(viid);
+
+                    if ( count + vehicleInfoDTO.getSpare() + transform == 0 ) vehicleInfoDTO.setCan_rent(false);
+                    else {
+                        if (!neededStoreMap.containsKey(storeId) || !neededStoreMap.get(storeId).containsKey(viid) ||
+                                (neededStoreMap.get(storeId).get(viid).size() <= sidEntry.getValue().size() + vehicleInfoDTO.getSpare() + transform)) {
+                            vehicleInfoDTO.setCan_rent(true);
+                        } else {
+                            vehicleInfoDTO.setCan_rent(false);
+                        }
                     }
                     vehicleInfoDTOS.add(vehicleInfoDTO);
                 }

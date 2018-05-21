@@ -21,6 +21,8 @@ public interface OrderLogic {
 
     List<Order> find(String identity, String phone, List<Integer> status, boolean exclude);
 
+    List<Order> find(String identity, List<Integer> status);
+
 //    void find(String identity, String phone, List<Integer> status, boolean exclude,
 //              List<Order> orders,
 //              Map<Integer, Vehicle> vehicleMap,
@@ -43,6 +45,8 @@ public interface OrderLogic {
 
     void countByStatus(Integer status,
                        Map<Integer, Integer> viidStatusCount);
+
+
 
     Order insert(Order order);
 

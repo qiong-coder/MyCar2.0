@@ -106,6 +106,15 @@ public class OrderLogicImpl implements OrderLogic {
 //
 //    }
 
+
+    @Override
+    public List<Order> find(String identity, List<Integer> status) {
+
+        QOrder qOrder = QOrder.order;
+
+        return Lists.newArrayList(orderRepository.findAll(qOrder.identity.eq(identity).and(qOrder.status.in(status))));
+    }
+
     public List<Order> find(Integer sid, Integer viid, @Nonnull Timestamp begin, @Nonnull Timestamp end) {
 
         QOrder qOrder = QOrder.order;
