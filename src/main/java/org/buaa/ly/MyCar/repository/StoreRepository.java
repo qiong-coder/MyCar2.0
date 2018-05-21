@@ -14,7 +14,7 @@ public interface StoreRepository extends PagingAndSortingRepository<Store, Integ
 
     List<Store> findByStatus(int status);
 
-    List<Store> findByCityAAndStatus(String city, int status);
+    List<Store> findByCityAndStatus(String city, int status);
 
     Store deleteById(int id);
 

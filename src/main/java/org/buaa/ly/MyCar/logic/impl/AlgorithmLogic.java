@@ -105,7 +105,7 @@ public class AlgorithmLogic {
 
         this.stockCityTransformMap = Maps.newHashMap();
 
-        this.needOrderMap = Maps.newHashMap();
+        this.needCityOrderMap = Maps.newHashMap();
 
         mergeList(stockMap, stockCityMap);
         mergeInteger(stockTransformMap, stockCityTransformMap);

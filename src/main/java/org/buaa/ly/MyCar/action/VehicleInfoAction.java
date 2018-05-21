@@ -49,10 +49,10 @@ public class VehicleInfoAction {
     }
 
     // Timestamp参数格式为 yyyy-mm-dd HH:MM:SS 即可
-    @RequestMapping(value = "/begin/end/", method = RequestMethod.GET)
+    @RequestMapping(value = "/{begin}/{end}/", method = RequestMethod.GET)
     public HttpResponse find(@RequestHeader(required = false) String token,
                              @RequestParam(required = false) String city,
-                             @RequestParam(required = false) int sid,
+                             @RequestParam(required = false) Integer sid,
                              @PathVariable Timestamp begin,
                              @PathVariable Timestamp end) {
         List<VehicleInfoDTO> vehicleInfoDTOS = vehicleInfoService.find(city, sid, begin, end);

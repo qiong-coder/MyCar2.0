@@ -38,7 +38,7 @@ public class StoreLogicImpl implements StoreLogic {
 
     @Override
     public List<Store> findByCity(String city) {
-        return Lists.newArrayList(storeRepository.findByCityAAndStatus(city, StatusEnum.OK.getStatus()));
+        return Lists.newArrayList(storeRepository.findByCityAndStatus(city, StatusEnum.OK.getStatus()));
     }
 
     @Override
