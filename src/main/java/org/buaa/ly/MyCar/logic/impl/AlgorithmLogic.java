@@ -182,7 +182,7 @@ public class AlgorithmLogic {
 
             if ( !vehicleInfoMap.containsKey(vehicle.getViid()) ) vehicleInfoMap.put(vehicle.getViid(), vehicle.getVehicleInfo());
 
-            if ( status == StatusEnum.OK.getStatus() || status == StatusEnum.SPARE.getStatus() ) {
+            if ( status == StatusEnum.OK.getStatus() ) {
                 put(vehicle.getSid(), vehicle.getViid(), vehicle, stockMap);
             } else if ( (status == StatusEnum.FIXING.getStatus() || status == StatusEnum.VALIDATE.getStatus()) ) {
                 if ( vehicle.getBeginTime() == null || vehicle.getEndTime() == null ) continue;

@@ -27,15 +27,19 @@ public class TimeUtils {
     }
 
     public static int days(Timestamp begin , Timestamp end) {
-        return hour(end)/24 - hour(begin)/24;
+        return (int)hour(end)/24 - (int)hour(begin)/24;
     }
 
     public static int daysByTime(Timestamp begin, Timestamp end) {
         return Long.valueOf((end.getTime() - begin.getTime() + MILLIS_PER_DAY - 1) / MILLIS_PER_DAY).intValue();
     }
 
-    public static int hour(Timestamp timestamp) {
-        return Long.valueOf((timestamp.getTime()-timestamp.getTimezoneOffset()*MILLIS_PER_MINUTES)/MILLIS_PER_HOUR).intValue();
+//    public static int hour(Timestamp timestamp) {
+//        return Long.valueOf((timestamp.getTime()-timestamp.getTimezoneOffset()*MILLIS_PER_MINUTES)/MILLIS_PER_HOUR).intValue();
+//    }
+
+    public static float hour(Timestamp timestamp) {
+        return Double.valueOf((timestamp.getTime()*1.0-timestamp.getTimezoneOffset()*MILLIS_PER_MINUTES)/MILLIS_PER_HOUR).floatValue();
     }
 
     public static Timestamp downByDay(Timestamp timestamp) {

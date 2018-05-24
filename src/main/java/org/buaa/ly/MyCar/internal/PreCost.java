@@ -25,8 +25,8 @@ public class PreCost {
         Calendar bCalendar = Calendar.getInstance();
         bCalendar.setTime(begin);
 
-        int bHour = TimeUtils.hour(begin);
-        int eHour = TimeUtils.hour(end);
+        float bHour = TimeUtils.hour(begin);
+        float eHour = TimeUtils.hour(end);
 
         int total_cost = 0;
 
@@ -49,21 +49,27 @@ public class PreCost {
             discounts.add(new CostItem(TimeUtils.getDateFormat(bCalendar.getTime()),discount,null));
             total_cost += day_cost * discount / 10000 * 100 + day_insurance;
             bCalendar.add(Calendar.DATE, 1);
-            bHour += 24;
-        } while (eHour - bHour >= 6);
+            bHour += 24.0;
+        } while (eHour - bHour > 4.0);
 
-        if (eHour - bHour >= 5) {
-            total_cost += 40000;
-            day_costs.add(new CostItem("超过5小时",40000, null));
-        } else if (eHour - bHour >= 4) {
-            total_cost += 30000;
-            day_costs.add(new CostItem("超过4小时",30000,null));
-        } else if (eHour - bHour >= 3) {
-            total_cost += 20000;
-            day_costs.add(new CostItem("超过3小时",20000,null));
-        } else if (eHour - bHour >= 2) {
-            total_cost += 10000;
-            day_costs.add(new CostItem("超过2小时", 10000, null));
+//        if (eHour - bHour >= 5) {
+//            total_cost += 40000;
+//            day_costs.add(new CostItem("超过5小时",40000, null));
+//        } else if (eHour - bHour >= 4) {
+//            total_cost += 30000;
+//            day_costs.add(new CostItem("超过4小时",30000,null));
+//        } else if (eHour - bHour >= 3) {
+//            total_cost += 20000;
+//            day_costs.add(new CostItem("超过3小时",20000,null));
+//        } else if (eHour - bHour >= 2) {
+//            total_cost += 10000;
+//            day_costs.add(new CostItem("超过2小时", 10000, null));
+//        }
+
+        if ( eHour - bHour >= 0.3 ) {
+            int overtime = vehicleInfoCost.day_cost(bCalendar) * vehicleInfoCost.discount(bCalendar) / 10000 * 100 / 2 + day_insurance;
+            total_cost += overtime;
+            day_costs.add(new CostItem("超过半个小时", overtime, null));
         }
 
         PreCost preCost = new PreCost();

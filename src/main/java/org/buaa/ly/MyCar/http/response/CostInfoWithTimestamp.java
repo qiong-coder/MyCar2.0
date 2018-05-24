@@ -32,8 +32,8 @@ public class CostInfoWithTimestamp {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(begin);
 
-        int bhour = TimeUtils.hour(begin);
-        int ehour = TimeUtils.hour(end);
+        float bhour = TimeUtils.hour(begin);
+        float ehour = TimeUtils.hour(end);
 
         int total_cost = 0;
         Map<String, Integer> day_costs = Maps.newHashMap();
@@ -47,21 +47,26 @@ public class CostInfoWithTimestamp {
             discounts.put(TimeUtils.getDateFormat(calendar.getTime()), discount);
             total_cost += day_cost * discount / 10000 * 100;
             calendar.add(Calendar.DATE, 1);
-            bhour += 24;
-        } while ( ehour - bhour >= 6 );
+            bhour += 24.0;
+        } while ( ehour - bhour > 4.0 );
 
-        if ( ehour - bhour >= 5 ) {
-            total_cost += 40000;
-            overtime.put("5", 40000);
-        } else if ( ehour - bhour >= 4 ) {
-            total_cost += 30000;
-            overtime.put("4", 30000);
-        } else if ( ehour - bhour >= 3 ) {
-            total_cost += 20000;
-            overtime.put("3", 20000);
-        } else if ( ehour - bhour >= 2 ) {
-            total_cost += 10000;
-            overtime.put("2", 10000);
+//        if ( ehour - bhour >= 5 ) {
+//            total_cost += 40000;
+//            overtime.put("5", 40000);
+//        } else if ( ehour - bhour >= 4 ) {
+//            total_cost += 30000;
+//            overtime.put("4", 30000);
+//        } else if ( ehour - bhour >= 3 ) {
+//            total_cost += 20000;
+//            overtime.put("3", 20000);
+//        } else if ( ehour - bhour >= 2 ) {
+//            total_cost += 10000;
+//            overtime.put("2", 10000);
+//        }
+
+        if ( ehour - bhour > 0.5 ) {
+            total_cost += vehicleInfoCost.day_cost(calendar) * vehicleInfoCost.discount(calendar) / 10000 * 100 / 2 ;
+            overtime.put(String.format("%.1f",ehour-bhour), vehicleInfoCost.day_cost(calendar)/2);
         }
 
         return CostInfoWithTimestamp.builder()
