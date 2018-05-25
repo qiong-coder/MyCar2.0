@@ -67,7 +67,7 @@ public class PreCost {
 //        }
 
         if ( eHour - bHour >= 0.3 ) {
-            int overtime = vehicleInfoCost.day_cost(bCalendar) * vehicleInfoCost.discount(bCalendar) / 10000 * 100 / 2 + day_insurance;
+            int overtime = vehicleInfoCost.day_cost(bCalendar) * vehicleInfoCost.discount(bCalendar) / 2 / 10000 * 100 + day_insurance;
             total_cost += overtime;
             day_costs.add(new CostItem("超过半个小时", overtime, null));
         }

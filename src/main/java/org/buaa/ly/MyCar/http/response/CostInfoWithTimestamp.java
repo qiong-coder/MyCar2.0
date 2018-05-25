@@ -65,8 +65,9 @@ public class CostInfoWithTimestamp {
 //        }
 
         if ( ehour - bhour > 0.5 ) {
-            total_cost += vehicleInfoCost.day_cost(calendar) * vehicleInfoCost.discount(calendar) / 10000 * 100 / 2 ;
-            overtime.put(String.format("%.1f",ehour-bhour), vehicleInfoCost.day_cost(calendar)/2);
+            int cost = vehicleInfoCost.day_cost(calendar) * vehicleInfoCost.discount(calendar) / 2 / 10000 * 100 ;
+            total_cost += cost;
+            overtime.put(String.format("%.1f",ehour-bhour), cost);
         }
 
         return CostInfoWithTimestamp.builder()
