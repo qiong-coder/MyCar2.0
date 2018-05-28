@@ -8,6 +8,7 @@ import org.buaa.ly.MyCar.entity.Vehicle;
 import org.buaa.ly.MyCar.entity.VehicleInfo;
 import org.buaa.ly.MyCar.exception.BaseError;
 import org.buaa.ly.MyCar.exception.NotFoundError;
+import org.buaa.ly.MyCar.http.dto.VehicleDTO;
 import org.buaa.ly.MyCar.http.dto.VehicleInfoDTO;
 import org.buaa.ly.MyCar.logic.*;
 import org.buaa.ly.MyCar.logic.impl.AlgorithmLogic;
@@ -118,74 +119,56 @@ public class VehicleInfoServiceImpl implements VehicleInfoService {
         AlgorithmLogic algorithmLogic = new AlgorithmLogic(city, sid, null, begin, end, storeLogic, vehicleLogic, orderLogic);
         List<VehicleInfoDTO> vehicleInfoDTOS = Lists.newArrayList();
 
-        if ( city != null ) {
-            Map<String, Map<Integer, List<Vehicle>>> storeCityMap = algorithmLogic.getStockCityMap();
-            Map<String, Map<Integer, Integer>> cityTransformMap = algorithmLogic.getStockCityTransformMap();
-            Map<String, Map<Integer, List<Order>>> cityNeededStoreMap = algorithmLogic.getNeedCityOrderMap();
+        if ( city != null || sid != null ) {
 
-            for ( Map.Entry<String, Map<Integer, List<Vehicle>>> sidEntry : storeCityMap.entrySet() ) {
+            Map<Integer, VehicleInfo> vehicleInfoMap = algorithmLogic.getVehicleInfoMap();
 
-                String c = sidEntry.getKey();
+            for ( Map.Entry<Integer, VehicleInfo> vehicleInfoEntry : vehicleInfoMap.entrySet() ) {
 
-                for ( Map.Entry<Integer, VehicleInfo> vehicleInfoEntry : algorithmLogic.getVehicleInfoMap().entrySet() ) {
+                int viid = vehicleInfoEntry.getKey();
+                VehicleInfoDTO vehicleInfoDTO = VehicleInfoDTO.build(vehicleInfoEntry.getValue());
 
-                    VehicleInfoDTO vehicleInfoDTO = VehicleInfoDTO.build(vehicleInfoEntry.getValue());
-                    int viid = vehicleInfoDTO.getId();
-                    int transform = 0;
-                    int count = 0;
+                int stock = 0;
+                int transform = 0;
+                int needed = 0;
 
-                    if ( sidEntry.getValue().containsKey(viid) ) count = sidEntry.getValue().size();
-
-                    if ( cityTransformMap.containsKey(c) && cityTransformMap.get(c).containsKey(viid) ) transform = cityTransformMap.get(c).get(viid);
-
-                    if ( count + vehicleInfoDTO.getSpare() + transform == 0 ) vehicleInfoDTO.setCan_rent(false);
-                    else {
-                        if ( !cityNeededStoreMap.containsKey(c) || !cityNeededStoreMap.get(c).containsKey(viid) ||
-                                (cityNeededStoreMap.get(c).get(viid).size() <= count + vehicleInfoDTO.getSpare() + transform) ) {
-                            vehicleInfoDTO.setCan_rent(true);
-                        } else {
-                            vehicleInfoDTO.setCan_rent(false);
-                        }
-                    }
-
-                    vehicleInfoDTOS.add(vehicleInfoDTO);
+                if ( city != null ) {
+                    Map<String, Map<Integer, List<Vehicle>>> stockVehicleMap = algorithmLogic.getStockCityMap();
+                    if ( stockVehicleMap.containsKey(city) && stockVehicleMap.get(city).containsKey(viid) )
+                        stock = stockVehicleMap.get(city).get(viid).size();
+                } else {
+                    Map<Integer, Map<Integer, List<Vehicle>>> stockVehicleMap = algorithmLogic.getStockMap();
+                    if ( stockVehicleMap.containsKey(sid) && stockVehicleMap.get(sid).containsKey(viid) )
+                        stock = stockVehicleMap.get(sid).get(viid).size();
                 }
 
-            }
-        } else {
-
-            Map<Integer, Map<Integer, List<Vehicle>>> storeVehicleMap = algorithmLogic.getStockMap();
-            Map<Integer, Map<Integer, Integer>> transformMap = algorithmLogic.getStockTransformMap();
-            Map<Integer, Map<Integer, List<Order>>> neededStoreMap = algorithmLogic.getNeedOrderMap();
-
-            for (Map.Entry<Integer, Map<Integer, List<Vehicle>>> sidEntry : storeVehicleMap.entrySet()) {
-
-                int storeId = sidEntry.getKey();
-
-                for ( Map.Entry<Integer, VehicleInfo> vehicleInfoEntry : algorithmLogic.getVehicleInfoMap().entrySet() ) {
-
-                    VehicleInfoDTO vehicleInfoDTO = VehicleInfoDTO.build(vehicleInfoEntry.getValue());
-                    int viid = vehicleInfoDTO.getId();
-                    int count = 0;
-                    int transform = 0;
-
-                    if ( sidEntry.getValue().containsKey(viid) ) count = sidEntry.getValue().size();
-
-                    if (transformMap.containsKey(storeId) && transformMap.get(storeId).containsKey(viid)) transform = transformMap.get(storeId).get(viid);
-
-                    if ( count + vehicleInfoDTO.getSpare() + transform == 0 ) vehicleInfoDTO.setCan_rent(false);
-                    else {
-                        if (!neededStoreMap.containsKey(storeId) || !neededStoreMap.get(storeId).containsKey(viid) ||
-                                (neededStoreMap.get(storeId).get(viid).size() <= sidEntry.getValue().size() + vehicleInfoDTO.getSpare() + transform)) {
-                            vehicleInfoDTO.setCan_rent(true);
-                        } else {
-                            vehicleInfoDTO.setCan_rent(false);
-                        }
-                    }
-                    vehicleInfoDTOS.add(vehicleInfoDTO);
+                if ( city != null ) {
+                    Map<String, Map<Integer, Integer>> transformMap = algorithmLogic.getStockCityTransformMap();
+                    if ( transformMap.containsKey(city) && transformMap.get(city).containsKey(viid) )
+                        transform = transformMap.get(city).get(viid);
+                } else {
+                    Map<Integer, Map<Integer, Integer>> transformMap = algorithmLogic.getStockTransformMap();
+                    if ( transformMap.containsKey(sid) && transformMap.get(sid).containsKey(viid) )
+                        transform = transformMap.get(sid).get(viid);
                 }
 
+                if ( city != null ) {
+                    Map<String, Map<Integer, List<Order>>> orderMap = algorithmLogic.getNeedCityOrderMap();
+                    if ( orderMap.containsKey(city) && orderMap.get(city).containsKey(viid))
+                        needed = orderMap.get(city).get(viid).size();
+                } else {
+                    Map<Integer, Map<Integer, List<Order>>> orderMap = algorithmLogic.getNeedOrderMap();
+                    if ( orderMap.containsKey(sid) && orderMap.get(sid).containsKey(viid))
+                        needed = orderMap.get(sid).get(viid).size();
+                }
+
+                if ( stock + transform + vehicleInfoDTO.getSpare() != 0 && needed <= stock + transform + vehicleInfoDTO.getSpare() )
+                    vehicleInfoDTO.setCan_rent(true);
+                else vehicleInfoDTO.setCan_rent(false);
+
+                vehicleInfoDTOS.add(vehicleInfoDTO);
             }
+
         }
 
         return vehicleInfoDTOS;

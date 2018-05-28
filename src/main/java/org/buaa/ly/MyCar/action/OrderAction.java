@@ -1,26 +1,18 @@
 package org.buaa.ly.MyCar.action;
 
 
-import com.google.common.collect.Lists;
+
 import lombok.extern.slf4j.Slf4j;
-import org.buaa.ly.MyCar.entity.Vehicle;
 import org.buaa.ly.MyCar.http.HttpResponse;
 import org.buaa.ly.MyCar.http.dto.OrderDTO;
-import org.buaa.ly.MyCar.http.response.OrderSchedule;
-import org.buaa.ly.MyCar.internal.ScheduleItem;
 import org.buaa.ly.MyCar.service.AccountService;
 import org.buaa.ly.MyCar.service.OrderService;
 import org.buaa.ly.MyCar.utils.RoleEnum;
-import org.buaa.ly.MyCar.utils.StatusEnum;
 import org.buaa.ly.MyCar.utils.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.management.relation.RoleStatus;
-import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -52,8 +44,10 @@ public class OrderAction {
     }
 
     @RequestMapping(value = "/order/{viid}/", method = RequestMethod.POST)
-    public HttpResponse insert(@PathVariable int viid,
+    public HttpResponse insert(@RequestHeader String token,
+                               @PathVariable int viid,
                                @RequestBody OrderDTO orderDTO) {
+        accountService.check(token, RoleEnum.USER);
         orderDTO = orderService.insert(viid, orderDTO);
         if ( orderDTO != null ) return new HttpResponse(orderDTO);
         else return HttpResponse.buildErrorResponse();
@@ -70,15 +64,18 @@ public class OrderAction {
     }
 
     @RequestMapping(value = "/order/{id}/", method = RequestMethod.DELETE)
-    public HttpResponse delete(@RequestHeader(required = false) String token,
+    public HttpResponse delete(@RequestHeader String token,
                                @PathVariable int id) {
+        accountService.check(token, RoleEnum.OPERATOR);
         if ( orderService.delete(id, 0) != null ) return new HttpResponse();
         else return HttpResponse.buildErrorResponse();
     }
 
     @RequestMapping(value = "/order/check/{id}/", method = RequestMethod.PUT)
-    public HttpResponse check(@PathVariable int id)
+    public HttpResponse check(@RequestHeader String token,
+                              @PathVariable int id)
     {
+        accountService.check(token, RoleEnum.USER);
         if ( orderService.check(id) != null ) return new HttpResponse();
         else return HttpResponse.buildErrorResponse();
     }
@@ -114,11 +111,11 @@ public class OrderAction {
     }
 
     @RequestMapping(value = "/order/cancel/{id}/", method = RequestMethod.PUT)
-    public HttpResponse cancel(@RequestHeader(required = false) String token,
+    public HttpResponse cancel(@RequestHeader String token,
                                @PathVariable int id,
                                @RequestBody OrderDTO orderDTO)
     {
-        //accountService.check(token, RoleEnum.OPERATOR);
+        accountService.check(token, RoleEnum.USER);
         if ( orderService.cancel(id, orderDTO) != null ) return new HttpResponse();
         else return HttpResponse.buildErrorResponse();
     }
@@ -130,6 +127,7 @@ public class OrderAction {
                                 @RequestParam Timestamp begin,
                                 @RequestParam Timestamp end)
     {
+        accountService.check(token, RoleEnum.OPERATOR);
         begin = TimeUtils.downByDay(begin);
         end = TimeUtils.upByDay(end);
         accountService.check(token, RoleEnum.OPERATOR);
@@ -150,11 +148,12 @@ public class OrderAction {
     }
 
     @RequestMapping(value = "/order/conflict", method = RequestMethod.GET)
-    public HttpResponse conflict(HttpServletRequest request,
+    public HttpResponse conflict(@RequestHeader String token,
                                  @RequestParam(required = false) Integer sid,
                                  @RequestParam(required = false) Integer viid,
                                  @RequestParam Timestamp begin,
                                  @RequestParam Timestamp end) {
+        accountService.check(token, RoleEnum.OPERATOR);
         return new HttpResponse(orderService.conflict(sid, viid, begin, end));
     }
 

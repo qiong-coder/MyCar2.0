@@ -184,11 +184,12 @@ public class AlgorithmLogic {
 
             if ( status == StatusEnum.OK.getStatus() ) {
                 put(vehicle.getSid(), vehicle.getViid(), vehicle, stockMap);
-            } else if ( (status == StatusEnum.FIXING.getStatus() || status == StatusEnum.VALIDATE.getStatus()) ) {
-                if ( vehicle.getBeginTime() == null || vehicle.getEndTime() == null ) continue;
-                if( (vehicle.getEndTime().compareTo(begin) < 0 || vehicle.getBeginTime().compareTo(end) > 0 ))
-                    put(vehicle.getSid(), vehicle.getViid(), vehicle, stockMap);
             }
+//            } else if ( (status == StatusEnum.FIXING.getStatus() || status == StatusEnum.VALIDATE.getStatus()) ) {
+//                if ( vehicle.getBeginTime() == null || vehicle.getEndTime() == null ) continue;
+//                if( (vehicle.getEndTime().compareTo(begin) < 0 || vehicle.getBeginTime().compareTo(end) > 0 ))
+//                    put(vehicle.getSid(), vehicle.getViid(), vehicle, stockMap);
+//            }
 
 
         }
