@@ -1,0 +1,13 @@
+#+TITLE: 支付相关
+
+* 支付流程
+  + 订单创建后
+  + 请求支付链接 http://ip:port/MyCar/pay/weixin/get/{oid}/ 
+    + 前端根据返回的信息（URL）生成中间支付页面 https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=6_2
+    + 前端生成二维码 https://blog.csdn.net/qq_15096707/article/details/51741452
+  + 原有页面上有浮层，用户支付完成后，可以通过点击浮层上的支付完成来请求订单查询接口。
+
+    
+  *相关接口定义在[[file:~/IdeaProjects/MyCar/src/main/java/org/buaa/ly/MyCar/action/PayAction.java][支付接口]]*
+
+  

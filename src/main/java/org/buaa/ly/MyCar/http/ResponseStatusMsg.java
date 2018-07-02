@@ -17,7 +17,8 @@ public enum ResponseStatusMsg {
     DUPLICATE_ERROR(-24, "duplicate error"),
     STATUS_ERROR(-25, "status error"),
     CHECK_ERROR(-26, "check error"),
-    CODE_REQUEST_TIMEOUT(-27, "code request not timeout");
+    CODE_REQUEST_TIMEOUT(-27, "code request not timeout"),
+    PAY_ERROR(-28, "failure to process pay");
 
 
     private int status;

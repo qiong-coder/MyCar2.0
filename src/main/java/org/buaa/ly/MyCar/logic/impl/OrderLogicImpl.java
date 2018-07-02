@@ -135,6 +135,11 @@ public class OrderLogicImpl implements OrderLogic {
     }
 
     @Override
+    public Order find(String oid) {
+        return orderRepository.findByOid(oid);
+    }
+
+    @Override
     public List<Order> findHistoryOrders(Integer viid, Integer vid, Timestamp begin, Timestamp end) {
 
         QOrder qOrder = QOrder.order;

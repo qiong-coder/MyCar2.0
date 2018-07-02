@@ -17,6 +17,7 @@ import org.buaa.ly.MyCar.internal.*;
 import org.buaa.ly.MyCar.logic.*;
 import org.buaa.ly.MyCar.logic.impl.AlgorithmLogic;
 import org.buaa.ly.MyCar.service.OrderService;
+import org.buaa.ly.MyCar.service.PayService;
 import org.buaa.ly.MyCar.utils.BeanCopyUtils;
 import org.buaa.ly.MyCar.utils.OrderUtils;
 import org.buaa.ly.MyCar.utils.StatusEnum;
@@ -46,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
 
     private VehicleInfoLogic vehicleInfoLogic;
 
-    private PayLogic payLogic;
+    private PayService payService;
 
     @Autowired
     public void setOrderLogic(OrderLogic orderLogic) {
@@ -69,8 +70,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Autowired
-    public void setPayLogic(PayLogic payLogic) {
-        this.payLogic = payLogic;
+    public void setPayService(PayService payService) {
+        this.payService = payService;
     }
 
     @Override
@@ -158,6 +159,7 @@ public class OrderServiceImpl implements OrderService {
         orderDTO.setPreCost(PreCost.build(vehicleInfoDTO.getCost(), orderDTO.getBeginTime(), orderDTO.getEndTime(), orderDTO.getInsurance()));
         orderDTO.setOid(OrderUtils.oid(orderDTO.getRentSid(),viid,orderDTO.getIdentity()));
         return OrderDTO.build(orderLogic.insert(orderDTO.build()));
+
     }
 
     @Override
@@ -188,7 +190,7 @@ public class OrderServiceImpl implements OrderService {
         if ( order.getStatus().compareTo(StatusEnum.UNPIAD.getStatus()) != 0 ) {
             throw new StatusError("order's status is unpaid");
         } else {
-            if ( payLogic.check(id) ) {
+            if ( payService.check(id) ) {
                 order = orderLogic.update(id, StatusEnum.PENDING.getStatus());
                 if ( order == null ) throw new BaseError(-1,"update error");
                 return OrderDTO.build(order);

@@ -10,7 +10,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(name = "child", classes = {TestRootConfig.class, WebConfig.class})
+@ContextConfiguration(name = "child", classes = {TestRootConfig.class, WebConfig.class, TestPayConfig.class})
 @FixMethodOrder(MethodSorters.DEFAULT)
 @Rollback
 public class TestLoader {}

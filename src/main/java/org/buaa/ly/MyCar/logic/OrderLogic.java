@@ -23,6 +23,8 @@ public interface OrderLogic {
 
     List<Order> find(String identity, List<Integer> status);
 
+    Order find(String oid);
+
 //    void find(String identity, String phone, List<Integer> status, boolean exclude,
 //              List<Order> orders,
 //              Map<Integer, Vehicle> vehicleMap,

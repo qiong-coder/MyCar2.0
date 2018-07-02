@@ -21,10 +21,17 @@ public class TimeUtils {
         return dateFormat.format(calendar);
     }
 
+    public static String dateFormat(Date date, String f) {
+        SimpleDateFormat format = new SimpleDateFormat(f);
+        return format.format(date);
+    }
+
     public static String getOutFormat(Long expire) {
         Date now  = new Date(System.currentTimeMillis()+expire*MILLIS_PER_SECOND);
         return outFormat.format(now);
     }
+
+
 
     public static int days(Timestamp begin , Timestamp end) {
         return (int)hour(end)/24 - (int)hour(begin)/24;

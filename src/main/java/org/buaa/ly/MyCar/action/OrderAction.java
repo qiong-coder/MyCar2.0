@@ -44,10 +44,10 @@ public class OrderAction {
     }
 
     @RequestMapping(value = "/order/{viid}/", method = RequestMethod.POST)
-    public HttpResponse insert(@RequestHeader String token,
+    public HttpResponse insert(@RequestHeader(required = false) String token,
                                @PathVariable int viid,
                                @RequestBody OrderDTO orderDTO) {
-        accountService.check(token, RoleEnum.USER);
+        //accountService.check(token, RoleEnum.USER);
         orderDTO = orderService.insert(viid, orderDTO);
         if ( orderDTO != null ) return new HttpResponse(orderDTO);
         else return HttpResponse.buildErrorResponse();
