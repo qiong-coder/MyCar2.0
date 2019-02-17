@@ -1,17 +1,10 @@
 package org.buaa.ly.MyCar.logic.impl;
 
 import com.google.common.collect.Lists;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.entity.Order;
 import org.buaa.ly.MyCar.entity.QOrder;
-import org.buaa.ly.MyCar.entity.Vehicle;
-import org.buaa.ly.MyCar.entity.VehicleInfo;
-import org.buaa.ly.MyCar.http.dto.OrderDTO;
-import org.buaa.ly.MyCar.http.dto.VehicleDTO;
-import org.buaa.ly.MyCar.http.dto.VehicleInfoDTO;
 import org.buaa.ly.MyCar.logic.OrderLogic;
 import org.buaa.ly.MyCar.repository.OrderRepository;
 import org.buaa.ly.MyCar.utils.BeanCopyUtils;

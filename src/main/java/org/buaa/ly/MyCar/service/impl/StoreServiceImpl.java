@@ -8,7 +8,6 @@ import org.buaa.ly.MyCar.logic.StoreLogic;
 import org.buaa.ly.MyCar.service.StoreService;
 import org.buaa.ly.MyCar.utils.BeanCopyUtils;
 import org.buaa.ly.MyCar.utils.StatusEnum;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;

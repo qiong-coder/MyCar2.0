@@ -18,7 +18,8 @@ public enum ResponseStatusMsg {
     STATUS_ERROR(-25, "status error"),
     CHECK_ERROR(-26, "check error"),
     CODE_REQUEST_TIMEOUT(-27, "code request not timeout"),
-    PAY_ERROR(-28, "failure to process pay");
+    PAY_ERROR(-28, "failure to process pay"),
+    ORDER_PAID(-29, "order paid");
 
 
     private int status;

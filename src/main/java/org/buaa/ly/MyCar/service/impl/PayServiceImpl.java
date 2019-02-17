@@ -54,8 +54,14 @@ public class PayServiceImpl implements PayService {
             WxPayNativeOrderResult result = payLogic.getPayUrl(order, ip);
             return result.getCodeUrl();
         } catch ( WxPayException exception) {
-            log.warn("failure to get pay url - order:{}\tip:{}\texception:{}", order, ip, exception);
-            throw new PayError("failure to get pay url");
+            if ( exception.getReturnCode().compareTo(WxPayConstants.ResultCode.SUCCESS) == 0 &&
+                    exception.getResultCode().compareTo(WxPayConstants.OrderCloseResultErrorCode.ORDER_PAID) == 0 ) {
+                log.warn("order:{} is paid", order.getOid());
+                throw new PayError();
+            } else {
+                log.warn("failure to get pay url - order:{}\tip:{}\texception:{}", order, ip, exception);
+                throw new PayError("failure to get pay url");
+            }
         }
 
     }
@@ -116,36 +122,46 @@ public class PayServiceImpl implements PayService {
                 WxPayOrderNotifyResult result = payLogic.payNotify(xmlData);
                 if ( result.getReturnCode().compareTo("SUCCESS") != 0 || result.getResultCode().compareTo("SUCCESS") != 0 ) {
                     log.warn("failure to process pay notify - {}", result);
-                    return WxPayNotifyResponse.fail(result.getReturnMsg());
+                    return WxPayNotifyResponse.success("OK");
                 } else {
                     String oid = result.getOutTradeNo();
                     Order order = orderLogic.find(oid);
-                    if ( order.getStatus() == StatusEnum.UNPIAD.getStatus() ) {
+                    if ( order == null ) {
+                        log.warn("failure to find the order by oid:{}", oid);
+                        return WxPayNotifyResponse.success("OK");
+                    } else if ( order.getStatus() == StatusEnum.UNPIAD.getStatus() ) {
+                        log.info("success to process pay notify - {}", result);
                         orderLogic.update(order.getId(), StatusEnum.PENDING.getStatus());
                     }
                     return WxPayNotifyResponse.success("OK");
                 }
             } catch ( WxPayException exception ) {
-                log.warn("failure to process pay notify - {}", exception);
-                return WxPayNotifyResponse.fail(exception.getReturnMsg());
+                log.warn("failure to process pay notify - {}", exception.toString());
+                return WxPayNotifyResponse.success(exception.getReturnMsg());
             }
 
         } else if ( type.compareTo("refund") == 0 ) {
             try {
                 WxPayRefundNotifyResult result = payLogic.refundNotify(xmlData);
                 if ( result.getReturnCode().compareTo("SUCCESS") != 0 || result.getResultCode().compareTo("SUCCESS") != 0 ) {
-                    log.warn("failure to process refund notify - {}", result);
-                    return WxPayNotifyResponse.fail(result.getReturnMsg());
+                    log.warn("failure to process refund notify - {}", result.toString());
+                    return WxPayNotifyResponse.success(result.getReturnMsg());
                 } else {
                     String oid = result.getReqInfo().getOutTradeNo();
                     Order order = orderLogic.find(oid);
-                    if ( order.getStatus() == StatusEnum.DRAWBACK.getStatus() )
+                    if ( order == null ) {
+                        log.warn("failure to find the order by oid:{}", oid);
+                        return WxPayNotifyResponse.success("OK");
+                    } else if ( order.getStatus() == StatusEnum.DRAWBACK.getStatus() ) {
+                        log.info("success to process refund notify - {}", result);
                         orderLogic.update(order.getId(), StatusEnum.CANCELED.getStatus());
+                    }
+
                     return WxPayNotifyResponse.success("OK");
                 }
             } catch ( WxPayException exception ) {
                 log.warn("failure to process refund notify - {}", exception);
-                return WxPayNotifyResponse.fail(exception.getReturnMsg());
+                return WxPayNotifyResponse.success(exception.getReturnMsg());
             }
         } else {
             log.warn("unsupported pay's type - {}", type);

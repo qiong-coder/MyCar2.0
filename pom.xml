@@ -134,7 +134,7 @@
     <dependency>
       <groupId>com.github.binarywang</groupId>
       <artifactId>weixin-java-pay</artifactId>
-      <version>3.1.0</version>
+      <version>3.1.7.BETA</version>
     </dependency>
 
     <dependency>

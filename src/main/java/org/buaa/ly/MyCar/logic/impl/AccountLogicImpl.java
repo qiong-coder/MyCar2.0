@@ -5,7 +5,6 @@ import org.buaa.ly.MyCar.entity.Account;
 import org.buaa.ly.MyCar.logic.AccountLogic;
 import org.buaa.ly.MyCar.repository.AccountRepository;
 import org.buaa.ly.MyCar.utils.BeanCopyUtils;
-import org.hibernate.JDBCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;

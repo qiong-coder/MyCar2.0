@@ -188,7 +188,7 @@ public class OrderServiceImpl implements OrderService {
         if ( order.getStatus().compareTo(StatusEnum.PENDING.getStatus()) == 0 ) return OrderDTO.build(order);
 
         if ( order.getStatus().compareTo(StatusEnum.UNPIAD.getStatus()) != 0 ) {
-            throw new StatusError("order's status is unpaid");
+            throw new StatusError("order's status is not unpaid");
         } else {
             if ( payService.check(id) ) {
                 order = orderLogic.update(id, StatusEnum.PENDING.getStatus());

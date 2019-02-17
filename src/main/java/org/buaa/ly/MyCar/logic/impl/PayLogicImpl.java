@@ -1,11 +1,9 @@
 package org.buaa.ly.MyCar.logic.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.notify.WxPayRefundNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayNativeOrderResult;
-import com.github.binarywang.wxpay.bean.request.WxPayOrderQueryRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult;
@@ -16,12 +14,8 @@ import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.entity.Order;
-import org.buaa.ly.MyCar.exception.BaseError;
-import org.buaa.ly.MyCar.http.ResponseStatusMsg;
-import org.buaa.ly.MyCar.http.dto.OrderDTO;
 import org.buaa.ly.MyCar.internal.PreCost;
 import org.buaa.ly.MyCar.logic.PayLogic;
-import org.buaa.ly.MyCar.utils.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -50,7 +44,7 @@ public class PayLogicImpl implements PayLogic {
                 .totalFee(preCost.getTotal_cost())
                 .spbillCreateIp(ip)
                 .timeStart(WxPayConstants.QUERY_COMMENT_DATE_FORMAT.format(order.getCreateTime()))
-                .notifyUrl("http://mycarzc.com/pay/weixin/nofity/pay/")
+                .notifyUrl("http://mycarzc.com/MyCar/pay/weixin/nofity/pay/")
                 .productId(order.getVehicleInfo().getName())
                 .tradeType(WxPayConstants.TradeType.NATIVE).build();
 
@@ -72,7 +66,7 @@ public class PayLogicImpl implements PayLogic {
                 .outRefundNo(order.getOid()+"-refund")
                 .totalFee(preCost.getTotal_cost())
                 .refundFee(preCost.getTotal_cost())
-                .notifyUrl("http://mycarzc/com/pay/weixin/nofity/refund/")
+                .notifyUrl("http://mycarzc.com/MyCar/pay/weixin/nofity/refund/")
                 .build();
 
         return payService.refund(request);

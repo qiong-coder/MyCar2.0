@@ -1,7 +1,6 @@
 package org.buaa.ly.MyCar.logic.impl;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.slf4j.Slf4j;
 import org.buaa.ly.MyCar.entity.QVehicleInfo;
@@ -12,10 +11,8 @@ import org.buaa.ly.MyCar.utils.BeanCopyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 @Component("vehicleInfoLogic")
 @Slf4j
